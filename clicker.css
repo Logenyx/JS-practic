@@ -22,7 +22,7 @@ button {
     min-height: 100vh;
     box-sizing: border-box;
     position: relative; /* чтобы слой декораций растянулся по экрану */
-    overflow: hidden;
+    overflow: clip;     /* обрезает лишнее, но не мешает «липкой» плашке */
     /* «Классика» — базовый вид, остальные дизайны его перекрашивают */
     background: #f0f4f8;
     color: #222;
@@ -313,61 +313,27 @@ button {
     text-align: center;
 }
 
-/* ===== Карусель с карточками ===== */
-.carousel {
-    width: 100%;
-    max-width: 1100px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
+/* ===== Список карточек: сетка по три в ряд, дальше — вниз =====
+   Карточки заполняют ряд слева направо (4-я — слева во втором ряду, 5-я — в середине и т.д.),
+   а сама сетка стоит по центру экрана */
 .cards {
-    flex: 1;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 220px); /* столько колонок по 220px, сколько влезет */
+    justify-content: center;
     gap: 24px;
-    overflow-x: auto;              /* листается по горизонтали */
-    scroll-snap-type: x proximity; /* карточки «прилипают» при листании */
-    padding: 22px 12px 26px;       /* место для свечения и галочки */
-    scrollbar-width: thin;
+    padding: 16px 0;          /* место для свечения и галочки */
+    width: 100%;
+    /* не шире 3 колонок: 3 × 220 + 2 промежутка × 24 */
+    max-width: 708px;
 }
 
-.cards > .card {
-    flex: 0 0 auto;
-    scroll-snap-align: center;
+/* Карточки дизайнов шире: колонки по 300px, максимум 3 × 300 + 2 × 24 */
+.cards.theme-cards {
+    grid-template-columns: repeat(auto-fill, 300px);
+    max-width: 948px;
 }
 
-/* Когда карточек мало — они стоят по центру */
-.cards > .card:first-child { margin-left: auto; }
-.cards > .card:last-child  { margin-right: auto; }
-
-.carousel-btn {
-    flex: 0 0 auto;
-    width: 52px;
-    height: 52px;
-    padding: 0;
-    border-radius: 50%;
-    font-size: 34px;
-    line-height: 1;
-    background: white;
-    color: #333;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.carousel-btn:disabled {
-    opacity: 0.3;
-    cursor: default;
-}
-
-/* Листать нечего — стрелки прячем (но место оставляем, чтобы ничего не прыгало) */
-.carousel.no-scroll .carousel-btn {
-    visibility: hidden;
-}
-
-/* На телефоне стрелки не нужны — листают пальцем */
-@media (max-width: 600px) {
-    .carousel-btn { display: none; }
-}
+/* На узком экране колонок становится меньше (2 или 1) — само собой */
 
 /* ===== Карточка ===== */
 .card {
@@ -530,6 +496,13 @@ button {
     transform: translateY(20px);
     pointer-events: none;
     transition: opacity 0.25s, transform 0.25s;
+}
+
+/* Плашка «прилипает» к низу экрана — её видно, даже если список длинный */
+.shop-screen > .item-info {
+    position: sticky;
+    bottom: 16px;
+    z-index: 3;
 }
 
 /* Плашка выплывает */
@@ -910,13 +883,6 @@ button {
     color: #8a7a9a;
 }
 
-.theme-halloween .carousel-btn {
-    background: #1a0b2e;
-    color: #ff7518;
-    border: 2px solid #ff7518;
-    box-shadow: 0 0 12px rgba(255, 117, 24, 0.5);
-}
-
 .theme-halloween .setting-row select {
     background: #1a0b2e;
     color: #f5e6ff;
@@ -1157,14 +1123,6 @@ button {
     box-shadow: none;
 }
 
-.theme-neon .carousel-btn {
-    border-radius: 0;
-    background: transparent;
-    color: #0ff;
-    border: 2px solid #0ff;
-    box-shadow: 0 0 10px #0ff;
-}
-
 .theme-neon .slider {
     border-radius: 0;
 }
@@ -1360,12 +1318,6 @@ button {
     background: rgba(255, 255, 255, 0.25);
     color: rgba(255, 255, 255, 0.6);
     box-shadow: none;
-}
-
-.theme-winter .carousel-btn {
-    background: white;
-    color: #1e3a6e;
-    box-shadow: 0 4px 0 #8fb8e8;
 }
 
 .theme-winter .setting-row select {

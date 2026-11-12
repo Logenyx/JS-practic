@@ -36,6 +36,9 @@ const themeError = document.getElementById("themeError");
 
 // ===== Элементы настроек =====
 const settingsBackBtn = document.getElementById("settingsBackBtn");
+const musicToggle = document.getElementById("musicToggle");
+const musicVolumeRange = document.getElementById("musicVolumeRange");
+const musicVolumeValue = document.getElementById("musicVolumeValue");
 const volumeRange = document.getElementById("volumeRange");
 const volumeValue = document.getElementById("volumeValue");
 const soundToggle = document.getElementById("soundToggle");
@@ -64,7 +67,9 @@ let selectedTheme = null;      // какой дизайн выбран в маг
 
 // Настройки (сохраняются отдельно от прогресса — «Сброс» их не трогает)
 const settings = {
-    volume: 70,         // громкость 0–100
+    music: true,        // фоновая музыка вкл/выкл
+    musicVolume: 40,    // громкость музыки 0–100
+    volume: 70,         // громкость звуков 0–100
     sound: true,        // звуки вкл/выкл
     vibration: true,    // вибрация (работает на телефонах)
     animations: true,   // анимация фона
@@ -94,7 +99,9 @@ const texts = {
         applied: "Уже выбрано",
         owned: "Куплено",
         activeLabel: "✓ Выбрано",
-        volume: "Громкость",
+        music: "Музыка",
+        musicVolume: "Громкость музыки",
+        volume: "Громкость звуков",
         sound: "Звуки",
         vibration: "Вибрация",
         vibrationHint: "Работает только на телефонах",
@@ -145,7 +152,9 @@ const texts = {
         applied: "Already selected",
         owned: "Owned",
         activeLabel: "✓ Selected",
-        volume: "Volume",
+        music: "Music",
+        musicVolume: "Music volume",
+        volume: "Sound volume",
         sound: "Sounds",
         vibration: "Vibration",
         vibrationHint: "Works on phones only",
@@ -196,7 +205,9 @@ const texts = {
         applied: "Bereits ausgewählt",
         owned: "Gekauft",
         activeLabel: "✓ Ausgewählt",
-        volume: "Lautstärke",
+        music: "Musik",
+        musicVolume: "Musiklautstärke",
+        volume: "Lautstärke der Töne",
         sound: "Töne",
         vibration: "Vibration",
         vibrationHint: "Funktioniert nur auf Handys",
@@ -257,9 +268,8 @@ const sounds = {
     win:   { wave: "triangle", notes: [[523, 0, 0.12], [659, 0.12, 0.12], [784, 0.24, 0.12], [1047, 0.36, 0.35]] }
 };
 
-function playSound(name) {
-    if (!settings.sound || settings.volume === 0) return;
-
+// Включить звуковую систему браузера (можно только после нажатия пользователя)
+function ensureAudio() {
     try {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -267,9 +277,15 @@ function playSound(name) {
         if (audioCtx.state === "suspended") {
             audioCtx.resume();
         }
+        return true;
     } catch (e) {
-        return; // браузер не умеет — просто без звука
+        return false; // браузер не умеет — просто без звука
     }
+}
+
+function playSound(name) {
+    if (!settings.sound || settings.volume === 0) return;
+    if (!ensureAudio()) return;
 
     const sound = sounds[name];
     const volume = (settings.volume / 100) * 0.3; // 0.3 — чтобы на максимуме не оглушало
@@ -297,6 +313,308 @@ function vibrate(pattern) {
         navigator.vibrate(pattern);
     }
 }
+
+// ===== Фоновая музыка =====
+// Музыка тоже не из файлов: браузер сам играет ноты по «партитуре» ниже.
+//
+// Каждый такт — 8 шагов (восьмые ноты). В каждом такте звучат:
+//   chords — аккорд-подложка (pad), по одному аккорду на такт
+//   bass   — нота баса на такт, играется на шагах, где в bassPattern стоит «x»
+//   melody — мелодия по шагам, «-» = пауза, «|» — просто разделитель тактов для удобства
+// Инструменты: wave — форма звука, volume — громкость, length — длина ноты в шагах,
+//   attack — плавность начала, hold — сколько ноты держать до затухания (доля),
+//   filter — «приглушить» верха, detunes — несколько чуть расстроенных голосов (толще звук),
+//   overtone — добавить призвук (для колокольчиков)
+const musicTracks = {
+    // Весёлая и простая, до мажор
+    classic: {
+        bpm: 116,
+        chords: [["C4", "E4", "G4"], ["A3", "C4", "E4"], ["F3", "A3", "C4"], ["G3", "B3", "D4"]],
+        bass: ["C2", "A1", "F1", "G1"],
+        bassPattern: "x---x-x-",
+        melody: `E5 - G5 - C6 - G5 - | A5 - G5 - E5 - C5 - | F5 - A5 - C6 - A5 - | G5 - F5 - E5 - D5 -
+                 E5 G5 E5 C5 - - G4 - | A4 C5 E5 A5 - - G5 - | F5 E5 D5 C5 - - A4 - | B4 C5 D5 G5 - - - -`,
+        lead: { wave: "triangle", volume: 0.12, length: 1.6 },
+        pad: { wave: "sine", volume: 0.045, length: 8, attack: 0.15, hold: 0.6 },
+        bassInst: { wave: "sine", volume: 0.16, length: 2 },
+        drums: false
+    },
+
+    // Жуткая музыкальная шкатулка, ре минор с тревожными нотами
+    halloween: {
+        bpm: 72,
+        chords: [["D3", "F3", "A3"], ["Bb2", "D3", "F3"], ["G2", "Bb2", "D3"], ["A2", "C#3", "E3"]],
+        bass: ["D2", "Bb1", "G1", "A1"],
+        bassPattern: "x-------",
+        melody: `A5 D5 F5 A5 C#6 - A5 - | Bb5 D5 F5 Bb5 A5 - F5 - | G5 Bb4 D5 G5 F5 E5 D5 - | C#5 E5 A5 G5 F5 E5 C#5 -
+                 D6 - A5 - F5 - D5 - | F5 - D5 - Bb4 - D5 - | Bb4 - D5 - G5 - Bb5 - | A5 G#5 A5 - E5 - C#5 -`,
+        lead: { wave: "sine", volume: 0.1, length: 3, overtone: 4 },
+        pad: { wave: "sawtooth", volume: 0.03, length: 8, attack: 0.6, hold: 0.6, filter: 700, detunes: [-10, 10] },
+        bassInst: { wave: "sine", volume: 0.18, length: 7 },
+        drums: false
+    },
+
+    // Синтвейв: переливы синтезатора, пульсирующий бас и бит, ля минор
+    neon: {
+        bpm: 100,
+        chords: [["A3", "C4", "E4"], ["F3", "A3", "C4"], ["C4", "E4", "G4"], ["G3", "B3", "D4"]],
+        bass: ["A1", "F1", "C2", "G1"],
+        bassPattern: "xxxxxxxx",
+        melody: `A4 C5 E5 A5 E5 C5 A4 C5 | F4 A4 C5 F5 C5 A4 F4 A4 | C5 E5 G5 C6 G5 E5 C5 E5 | G4 B4 D5 G5 D5 B4 G4 B4`,
+        lead: { wave: "sawtooth", volume: 0.05, length: 0.9, filter: 2200 },
+        pad: { wave: "sawtooth", volume: 0.025, length: 8, attack: 0.2, hold: 0.7, filter: 1200, detunes: [-12, 12] },
+        bassInst: { wave: "sawtooth", volume: 0.1, length: 0.9, filter: 450 },
+        drums: true
+    },
+
+    // Тихие хрустальные колокольчики, фа мажор
+    winter: {
+        bpm: 84,
+        chords: [["F3", "A3", "C4"], ["D3", "F3", "A3"], ["Bb2", "D3", "F3"], ["C3", "E3", "G3"]],
+        bass: ["F2", "D2", "Bb1", "C2"],
+        bassPattern: "x---x---",
+        melody: `C6 - A5 - F5 - A5 - | D6 - A5 - F5 - D5 - | D6 - Bb5 - F5 - D6 - | C6 - G5 - E5 - G5 -
+                 A5 - - C6 F6 - - - | F6 - E6 D6 - - A5 - | Bb5 - D6 - F6 - D6 - | E6 - D6 - C6 - - -`,
+        lead: { wave: "sine", volume: 0.09, length: 4, overtone: 4 },
+        pad: { wave: "sine", volume: 0.05, length: 8, attack: 0.5, hold: 0.6 },
+        bassInst: { wave: "sine", volume: 0.12, length: 4 },
+        drums: false
+    }
+};
+
+const music = {
+    gain: null,       // общий регулятор громкости музыки
+    trackGain: null,  // регулятор текущей мелодии (для плавной смены)
+    timer: null,      // таймер, который подкладывает ноты наперёд
+    themeId: null,    // чья мелодия играет
+    step: 0,          // номер текущего шага
+    nextTime: 0       // когда должен прозвучать следующий шаг
+};
+
+let noiseBuffer = null; // «шум» для тарелочки в неоновом бите
+
+// Частота ноты по названию: "A4" = 440 Гц, "C#5", "Bb2" и т.д.
+function noteFreq(name) {
+    const m = name.match(/^([A-G])([#b]?)(\d)$/);
+    const base = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }[m[1]];
+    const shift = m[2] === "#" ? 1 : m[2] === "b" ? -1 : 0;
+    const midi = (Number(m[3]) + 1) * 12 + base + shift;
+    return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+// Сыграть одну ноту инструментом inst
+function playTone(name, time, duration, inst, out) {
+    const freq = noteFreq(name);
+    const attack = inst.attack || 0.01;
+    const holdUntil = time + Math.max(attack, duration * (inst.hold || 0));
+
+    // громкость ноты: плавно нарастает, держится, затухает
+    const g = audioCtx.createGain();
+    g.gain.setValueAtTime(0.0001, time);
+    g.gain.linearRampToValueAtTime(inst.volume, time + attack);
+    g.gain.setValueAtTime(inst.volume, holdUntil);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + duration);
+    g.connect(out);
+
+    // фильтр приглушает резкие верхние частоты
+    let input = g;
+    if (inst.filter) {
+        const f = audioCtx.createBiquadFilter();
+        f.type = "lowpass";
+        f.frequency.value = inst.filter;
+        f.connect(g);
+        input = f;
+    }
+
+    (inst.detunes || [0]).forEach(function (detune) {
+        const osc = audioCtx.createOscillator();
+        osc.type = inst.wave;
+        osc.frequency.value = freq;
+        osc.detune.value = detune;
+        osc.connect(input);
+        osc.start(time);
+        osc.stop(time + duration + 0.05);
+    });
+
+    // призвук — делает звук похожим на колокольчик
+    if (inst.overtone) {
+        const osc = audioCtx.createOscillator();
+        const og = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq * inst.overtone;
+        og.gain.value = 0.25;
+        osc.connect(og);
+        og.connect(input);
+        osc.start(time);
+        osc.stop(time + duration + 0.05);
+    }
+}
+
+// Бочка — низкий «бум»
+function playKick(time, out) {
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.frequency.setValueAtTime(130, time);
+    osc.frequency.exponentialRampToValueAtTime(45, time + 0.15);
+    g.gain.setValueAtTime(0.35, time);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + 0.25);
+    osc.connect(g);
+    g.connect(out);
+    osc.start(time);
+    osc.stop(time + 0.3);
+}
+
+// Тарелочка — короткий «тсс»
+function playHat(time, out) {
+    if (!noiseBuffer) {
+        noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.2, audioCtx.sampleRate);
+        const data = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+    }
+    const src = audioCtx.createBufferSource();
+    const filter = audioCtx.createBiquadFilter();
+    const g = audioCtx.createGain();
+    src.buffer = noiseBuffer;
+    filter.type = "highpass";
+    filter.frequency.value = 7000;
+    g.gain.setValueAtTime(0.05, time);
+    g.gain.exponentialRampToValueAtTime(0.0001, time + 0.05);
+    src.connect(filter);
+    filter.connect(g);
+    g.connect(out);
+    src.start(time);
+    src.stop(time + 0.06);
+}
+
+// Сыграть один шаг мелодии: аккорд (в начале такта), бас, ноту мелодии, бит
+function playStep(track, step, time) {
+    const stepTime = 60 / track.bpm / 2; // длительность восьмой ноты в секундах
+    const out = music.trackGain;
+    const bar = Math.floor(step / 8) % track.chords.length;
+    const inBar = step % 8;
+
+    if (inBar === 0) {
+        track.chords[bar].forEach(function (note) {
+            playTone(note, time, stepTime * track.pad.length, track.pad, out);
+        });
+    }
+
+    if (track.bassPattern[inBar] === "x") {
+        playTone(track.bass[bar], time, stepTime * track.bassInst.length, track.bassInst, out);
+    }
+
+    const note = track.notes[step % track.notes.length];
+    if (note !== "-") {
+        playTone(note, time, stepTime * track.lead.length, track.lead, out);
+    }
+
+    if (track.drums) {
+        if (inBar % 4 === 0) playKick(time, out);
+        if (inBar % 2 === 1) playHat(time, out);
+    }
+}
+
+// Каждые 50 мс подкладываем ноты на четверть секунды вперёд — так музыка не заикается
+function musicTick() {
+    if (!music.trackGain) return;
+    const track = musicTracks[music.themeId];
+    const stepTime = 60 / track.bpm / 2;
+
+    while (music.nextTime < audioCtx.currentTime + 0.25) {
+        playStep(track, music.step, music.nextTime);
+        music.nextTime += stepTime;
+        music.step++;
+    }
+}
+
+function setMusicVolume() {
+    if (music.gain) {
+        music.gain.gain.setTargetAtTime((settings.musicVolume / 100) * 0.6, audioCtx.currentTime, 0.05);
+    }
+}
+
+// Плавно заглушить текущую мелодию
+function fadeOutTrack() {
+    const old = music.trackGain;
+    if (!old) return;
+    const now = audioCtx.currentTime;
+    old.gain.cancelScheduledValues(now);
+    old.gain.setValueAtTime(old.gain.value, now);
+    old.gain.setTargetAtTime(0, now, 0.2);
+    setTimeout(function () {
+        old.disconnect();
+    }, 3000);
+    music.trackGain = null;
+}
+
+// Начать мелодию дизайна (старая плавно затихает)
+function startTrack(themeId) {
+    const track = musicTracks[themeId];
+    if (!track.notes) {
+        // разбираем мелодию из текста в список нот (один раз)
+        track.notes = track.melody.trim().split(/\s+/).filter(function (x) { return x !== "|"; });
+    }
+
+    if (!music.gain) {
+        music.gain = audioCtx.createGain();
+        music.gain.connect(audioCtx.destination);
+    }
+    setMusicVolume();
+    fadeOutTrack();
+
+    music.trackGain = audioCtx.createGain();
+    music.trackGain.gain.setValueAtTime(0, audioCtx.currentTime);
+    music.trackGain.gain.setTargetAtTime(1, audioCtx.currentTime, 0.3); // плавно нарастает
+    music.trackGain.connect(music.gain);
+
+    music.themeId = themeId;
+    music.step = 0;
+    music.nextTime = audioCtx.currentTime + 0.15;
+
+    if (!music.timer) {
+        music.timer = setInterval(musicTick, 50);
+    }
+}
+
+function stopMusic() {
+    if (music.timer) {
+        clearInterval(music.timer);
+        music.timer = null;
+    }
+    if (audioCtx) {
+        fadeOutTrack();
+    }
+    music.themeId = null;
+}
+
+// Решить, что сейчас должно играть: ничего или мелодия текущего дизайна
+function updateMusic() {
+    const shouldPlay = settings.music && audioCtx && !document.hidden;
+    if (!shouldPlay) {
+        stopMusic();
+        return;
+    }
+    if (music.timer && music.themeId === activeTheme) return; // уже играет нужная
+    startTrack(activeTheme);
+}
+
+// Браузеры запрещают звук, пока человек ничего не нажал на странице,
+// поэтому музыка включается при первом клике или нажатии клавиши
+function unlockAudio() {
+    if (ensureAudio()) {
+        updateMusic();
+    }
+    document.removeEventListener("pointerdown", unlockAudio);
+    document.removeEventListener("keydown", unlockAudio);
+}
+
+document.addEventListener("pointerdown", unlockAudio);
+document.addEventListener("keydown", unlockAudio);
+
+// Вкладку свернули — музыка на паузе, вернулись — играет дальше
+document.addEventListener("visibilitychange", updateMusic);
 
 // ===== Товары магазина улучшений =====
 // id — короткое имя товара: по нему товар запоминается в сохранении
@@ -349,6 +667,7 @@ function applyTheme(themeId) {
         setThemeClass(screen, themeId);
         fillDecor(screen.querySelector(".decor"), themeId);
     });
+    updateMusic(); // у каждого дизайна своя мелодия
 }
 
 // ===== Декорации заднего фона =====
@@ -804,6 +1123,10 @@ function loadSettings() {
 
 // Показать настройки на экране и применить их
 function applySettings() {
+    musicToggle.checked = settings.music;
+    musicVolumeRange.value = settings.musicVolume;
+    musicVolumeValue.textContent = settings.musicVolume + "%";
+    musicVolumeRange.disabled = !settings.music;
     volumeRange.value = settings.volume;
     volumeValue.textContent = settings.volume + "%";
     volumeRange.disabled = !settings.sound; // без звука громкость не нужна
@@ -813,6 +1136,21 @@ function applySettings() {
     confirmResetToggle.checked = settings.confirmReset;
     document.body.classList.toggle("no-anim", !settings.animations);
 }
+
+musicToggle.addEventListener("change", function () {
+    settings.music = musicToggle.checked;
+    saveSettings();
+    applySettings();
+    ensureAudio();
+    updateMusic();
+});
+
+musicVolumeRange.addEventListener("input", function () {
+    settings.musicVolume = Number(musicVolumeRange.value);
+    musicVolumeValue.textContent = settings.musicVolume + "%";
+    setMusicVolume();
+    saveSettings();
+});
 
 // Ползунок двигают — сразу меняем громкость
 volumeRange.addEventListener("input", function () {
@@ -895,9 +1233,6 @@ function showScreen(screen) {
     });
     screen.classList.add("active");
     window.scrollTo(0, 0);
-
-    // стрелки карусели можно посчитать только когда экран виден
-    screen.querySelectorAll(".cards").forEach(updateCarousel);
 }
 
 shopIcon.addEventListener("click", function () {
@@ -927,64 +1262,10 @@ settingsBackBtn.addEventListener("click", function () {
     showScreen(gameScreen);
 });
 
-// ===== Карусель: горизонтальное листание карточек =====
-
-const CARD_GAP = 24; // расстояние между карточками (как gap в CSS)
-
-function setupCarousel(cards) {
-    const carousel = cards.parentElement;
-    const prev = carousel.querySelector(".prev");
-    const next = carousel.querySelector(".next");
-
-    // на сколько листать стрелкой — на одну карточку
-    function step() {
-        const card = cards.querySelector(".card");
-        return card ? card.offsetWidth + CARD_GAP : 300;
-    }
-
-    prev.addEventListener("click", function () {
-        cards.scrollBy({ left: -step(), behavior: "smooth" });
-    });
-    next.addEventListener("click", function () {
-        cards.scrollBy({ left: step(), behavior: "smooth" });
-    });
-
-    // колёсико мыши листает вбок
-    cards.addEventListener("wheel", function (e) {
-        if (cards.scrollWidth <= cards.clientWidth) return;
-        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-            e.preventDefault();
-            cards.scrollLeft += e.deltaY;
-        }
-    }, { passive: false });
-
-    cards.addEventListener("scroll", function () {
-        updateCarousel(cards);
-    });
-}
-
-// Включить/выключить стрелки: в начале нельзя назад, в конце — вперёд
-function updateCarousel(cards) {
-    const carousel = cards.parentElement;
-    const canScroll = cards.scrollWidth > cards.clientWidth + 2;
-    carousel.classList.toggle("no-scroll", !canScroll);
-    carousel.querySelector(".prev").disabled = cards.scrollLeft <= 2;
-    carousel.querySelector(".next").disabled = cards.scrollLeft + cards.clientWidth >= cards.scrollWidth - 2;
-}
-
-setupCarousel(cardsEl);
-setupCarousel(themeCardsEl);
-
-window.addEventListener("resize", function () {
-    updateCarousel(cardsEl);
-    updateCarousel(themeCardsEl);
-});
-
 // ===== Магазин улучшений =====
 
 // Рисуем карточки товаров заново
 function renderShop() {
-    const scroll = cardsEl.scrollLeft; // запоминаем, куда пролистано
     cardsEl.innerHTML = "";
 
     shopItems.forEach(function (item) {
@@ -1038,9 +1319,6 @@ function renderShop() {
 
         cardsEl.append(card);
     });
-
-    cardsEl.scrollLeft = scroll; // возвращаем прокрутку на место
-    updateCarousel(cardsEl);
 }
 
 // Выбрать товар: подсветить карточку и показать плашку
@@ -1105,7 +1383,6 @@ function makePreview(theme) {
 
 // Рисуем карточки дизайнов заново
 function renderThemes() {
-    const scroll = themeCardsEl.scrollLeft; // запоминаем, куда пролистано
     themeCardsEl.innerHTML = "";
 
     themes.forEach(function (theme) {
@@ -1166,9 +1443,6 @@ function renderThemes() {
 
         themeCardsEl.append(card);
     });
-
-    themeCardsEl.scrollLeft = scroll; // возвращаем прокрутку на место
-    updateCarousel(themeCardsEl);
 }
 
 // Текст и состояние кнопки на плашке: купить / применить / уже выбрано

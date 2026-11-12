@@ -50,12 +50,8 @@
             <div class="balance">0</div>
         </div>
 
-        <!-- Карусель: карточки листаются по горизонтали -->
-        <div class="carousel">
-            <button class="carousel-btn prev">‹</button>
-            <div id="cards" class="cards"></div>
-            <button class="carousel-btn next">›</button>
-        </div>
+        <!-- Сюда JS добавит карточки товаров (по три в ряд) -->
+        <div id="cards" class="cards"></div>
 
         <!-- Плашка с описанием выбранного товара -->
         <div id="itemInfo" class="item-info">
@@ -76,11 +72,8 @@
             <div class="balance">0</div>
         </div>
 
-        <div class="carousel">
-            <button class="carousel-btn prev">‹</button>
-            <div id="themeCards" class="cards"></div>
-            <button class="carousel-btn next">›</button>
-        </div>
+        <!-- Сюда JS добавит карточки дизайнов (по три в ряд) -->
+        <div id="themeCards" class="cards theme-cards"></div>
 
         <!-- Плашка с описанием выбранного дизайна -->
         <div id="themeInfo" class="item-info theme-info">
@@ -102,7 +95,25 @@
         </div>
 
         <div class="settings-panel">
-            <!-- Громкость -->
+            <!-- Музыка вкл/выкл -->
+            <div class="setting-row">
+                <span data-i18n="music"></span>
+                <label class="switch">
+                    <input type="checkbox" id="musicToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Громкость музыки -->
+            <div class="setting-row">
+                <label for="musicVolumeRange" data-i18n="musicVolume"></label>
+                <div class="setting-control">
+                    <input type="range" id="musicVolumeRange" min="0" max="100" step="5">
+                    <span id="musicVolumeValue" class="volume-value"></span>
+                </div>
+            </div>
+
+            <!-- Громкость звуков -->
             <div class="setting-row">
                 <label for="volumeRange" data-i18n="volume"></label>
                 <div class="setting-control">
