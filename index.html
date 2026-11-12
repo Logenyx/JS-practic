@@ -11,10 +11,10 @@
     <link rel="stylesheet" href="clicker.css">
 </head>
 <body>
-    <!-- Тексты с атрибутом data-i18n JS подставляет из словаря на выбранном языке -->
+    <!-- Тексты с атрибутом data-i18n JS подставляет из словаря на выбранном языке.
+         Класс theme-... на каждом экране задаёт его дизайн. -->
 
     <!-- ===== Экран игры ===== -->
-    <!-- Класс theme-... задаёт дизайн экрана -->
     <div id="gameScreen" class="screen game-screen active theme-classic">
         <!-- Задний фон с декорациями (JS заполняет его под выбранный дизайн) -->
         <div class="decor"></div>
@@ -26,8 +26,9 @@
             <button data-lang="de">DE</button>
         </div>
 
-        <!-- Иконки: магазин дизайнов и магазин улучшений -->
+        <!-- Иконки: настройки, магазин дизайнов, магазин улучшений -->
         <div class="top-icons">
+            <button id="settingsIcon" class="round-icon">⚙️</button>
             <button id="themesIcon" class="round-icon">🎨</button>
             <button id="shopIcon" class="round-icon">🛒</button>
         </div>
@@ -40,15 +41,21 @@
     </div>
 
     <!-- ===== Экран магазина улучшений ===== -->
-    <div id="shopScreen" class="screen shop-screen">
+    <div id="shopScreen" class="screen shop-screen theme-classic">
+        <div class="decor"></div>
+
         <div class="shop-header">
             <button id="backBtn" class="back-btn" data-i18n="back"></button>
             <h2 data-i18n="shop"></h2>
             <div class="balance">0</div>
         </div>
 
-        <!-- Сюда JS добавит карточки товаров -->
-        <div id="cards" class="cards"></div>
+        <!-- Карусель: карточки листаются по горизонтали -->
+        <div class="carousel">
+            <button class="carousel-btn prev">‹</button>
+            <div id="cards" class="cards"></div>
+            <button class="carousel-btn next">›</button>
+        </div>
 
         <!-- Плашка с описанием выбранного товара -->
         <div id="itemInfo" class="item-info">
@@ -60,15 +67,20 @@
     </div>
 
     <!-- ===== Экран магазина дизайнов ===== -->
-    <div id="themesScreen" class="screen shop-screen">
+    <div id="themesScreen" class="screen shop-screen theme-classic">
+        <div class="decor"></div>
+
         <div class="shop-header">
             <button id="themesBackBtn" class="back-btn" data-i18n="back"></button>
             <h2 data-i18n="designs"></h2>
             <div class="balance">0</div>
         </div>
 
-        <!-- Сюда JS добавит карточки дизайнов -->
-        <div id="themeCards" class="cards"></div>
+        <div class="carousel">
+            <button class="carousel-btn prev">‹</button>
+            <div id="themeCards" class="cards"></div>
+            <button class="carousel-btn next">›</button>
+        </div>
 
         <!-- Плашка с описанием выбранного дизайна -->
         <div id="themeInfo" class="item-info theme-info">
@@ -76,6 +88,77 @@
             <p id="themeInfoDesc"></p>
             <button id="themeActionBtn" class="confirm-btn"></button>
             <div id="themeError" class="shop-error"></div>
+        </div>
+    </div>
+
+    <!-- ===== Экран настроек ===== -->
+    <div id="settingsScreen" class="screen shop-screen theme-classic">
+        <div class="decor"></div>
+
+        <div class="shop-header">
+            <button id="settingsBackBtn" class="back-btn" data-i18n="back"></button>
+            <h2 data-i18n="settings"></h2>
+            <div></div>
+        </div>
+
+        <div class="settings-panel">
+            <!-- Громкость -->
+            <div class="setting-row">
+                <label for="volumeRange" data-i18n="volume"></label>
+                <div class="setting-control">
+                    <input type="range" id="volumeRange" min="0" max="100" step="5">
+                    <span id="volumeValue" class="volume-value"></span>
+                </div>
+            </div>
+
+            <!-- Звуки вкл/выкл -->
+            <div class="setting-row">
+                <span data-i18n="sound"></span>
+                <label class="switch">
+                    <input type="checkbox" id="soundToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Вибрация -->
+            <div class="setting-row">
+                <span>
+                    <span data-i18n="vibration"></span>
+                    <small class="setting-hint" data-i18n="vibrationHint"></small>
+                </span>
+                <label class="switch">
+                    <input type="checkbox" id="vibrationToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Анимация фона -->
+            <div class="setting-row">
+                <span data-i18n="animations"></span>
+                <label class="switch">
+                    <input type="checkbox" id="animToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Спрашивать перед сбросом -->
+            <div class="setting-row">
+                <span data-i18n="confirmReset"></span>
+                <label class="switch">
+                    <input type="checkbox" id="confirmResetToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Язык -->
+            <div class="setting-row">
+                <label for="langSelect" data-i18n="language"></label>
+                <select id="langSelect">
+                    <option value="ru">Русский</option>
+                    <option value="en">English</option>
+                    <option value="de">Deutsch</option>
+                </select>
+            </div>
         </div>
     </div>
 

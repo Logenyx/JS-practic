@@ -1,5 +1,11 @@
-// ===== Элементы экрана игры =====
+// ===== Экраны =====
 const gameScreen = document.getElementById("gameScreen");
+const shopScreen = document.getElementById("shopScreen");
+const themesScreen = document.getElementById("themesScreen");
+const settingsScreen = document.getElementById("settingsScreen");
+const allScreens = [gameScreen, shopScreen, themesScreen, settingsScreen];
+
+// ===== Элементы экрана игры =====
 const scoreEl = document.getElementById("score");
 const powerEl = document.getElementById("power");
 const clickBtn = document.getElementById("clickBtn");
@@ -7,10 +13,10 @@ const resetBtn = document.getElementById("resetBtn");
 const messageEl = document.getElementById("message");
 const shopIcon = document.getElementById("shopIcon");
 const themesIcon = document.getElementById("themesIcon");
+const settingsIcon = document.getElementById("settingsIcon");
 const langButtons = gameScreen.querySelectorAll(".lang-switch button");
 
 // ===== Элементы магазина улучшений =====
-const shopScreen = document.getElementById("shopScreen");
 const backBtn = document.getElementById("backBtn");
 const cardsEl = document.getElementById("cards");
 const itemInfo = document.getElementById("itemInfo");
@@ -20,7 +26,6 @@ const confirmBtn = document.getElementById("confirmBtn");
 const shopError = document.getElementById("shopError");
 
 // ===== Элементы магазина дизайнов =====
-const themesScreen = document.getElementById("themesScreen");
 const themesBackBtn = document.getElementById("themesBackBtn");
 const themeCardsEl = document.getElementById("themeCards");
 const themeInfo = document.getElementById("themeInfo");
@@ -28,6 +33,16 @@ const themeInfoName = document.getElementById("themeInfoName");
 const themeInfoDesc = document.getElementById("themeInfoDesc");
 const themeActionBtn = document.getElementById("themeActionBtn");
 const themeError = document.getElementById("themeError");
+
+// ===== Элементы настроек =====
+const settingsBackBtn = document.getElementById("settingsBackBtn");
+const volumeRange = document.getElementById("volumeRange");
+const volumeValue = document.getElementById("volumeValue");
+const soundToggle = document.getElementById("soundToggle");
+const vibrationToggle = document.getElementById("vibrationToggle");
+const animToggle = document.getElementById("animToggle");
+const confirmResetToggle = document.getElementById("confirmResetToggle");
+const langSelect = document.getElementById("langSelect");
 
 // Баланс показывается в обоих магазинах
 const balanceEls = document.querySelectorAll(".balance");
@@ -47,6 +62,15 @@ let ownedThemes = ["classic"]; // купленные дизайны («Клас�
 let activeTheme = "classic";   // включённый дизайн
 let selectedTheme = null;      // какой дизайн выбран в магазине дизайнов
 
+// Настройки (сохраняются отдельно от прогресса — «Сброс» их не трогает)
+const settings = {
+    volume: 70,         // громкость 0–100
+    sound: true,        // звуки вкл/выкл
+    vibration: true,    // вибрация (работает на телефонах)
+    animations: true,   // анимация фона
+    confirmReset: true  // спрашивать перед сбросом
+};
+
 // ===== Словарь: все тексты игры на трёх языках =====
 // {n} в тексте заменяется на число
 const texts = {
@@ -59,6 +83,7 @@ const texts = {
         win: "Ура, поздравляю!!!",
         shop: "Магазин",
         designs: "Дизайны",
+        settings: "Настройки",
         back: "← Назад",
         confirm: "Подтвердить",
         sold: "ПРОДАНО",
@@ -69,6 +94,14 @@ const texts = {
         applied: "Уже выбрано",
         owned: "Куплено",
         activeLabel: "✓ Выбрано",
+        volume: "Громкость",
+        sound: "Звуки",
+        vibration: "Вибрация",
+        vibrationHint: "Работает только на телефонах",
+        animations: "Анимация фона",
+        confirmReset: "Спрашивать перед сбросом",
+        resetConfirm: "Точно сбросить весь прогресс? Очки, покупки и дизайны пропадут.",
+        language: "Язык",
         items: {
             x2: { name: "Клик ×2", description: "Каждый клик будет давать 2 очка вместо 1." },
             auto: { name: "Автокликер", description: "Каждую секунду сам добавляет 1 очко." }
@@ -88,7 +121,7 @@ const texts = {
             },
             winter: {
                 name: "Вечная зима",
-                description: "Метель замела все дороги, и только в окне маленького дома ещё горит свет. Табло покрыто инеем, кнопка холодная и мягкая, как свежий снег, а кнопка сброса пахнет мятным леденцом. Кликай, пока пальцы не замёрзли. Говорят, эта зима не закончится, пока кто-нибудь не наберёт миллион…"
+                description: "Метель замела все дороги, и только в окнах маленькой деревни ещё горит свет. Табло покрыто инеем, кнопка холодная и мягкая, как свежий снег, а кнопка сброса пахнет мятным леденцом. Кликай, пока пальцы не замёрзли. Говорят, эта зима не закончится, пока кто-нибудь не наберёт миллион…"
             }
         }
     },
@@ -101,6 +134,7 @@ const texts = {
         win: "Hooray, congratulations!!!",
         shop: "Shop",
         designs: "Designs",
+        settings: "Settings",
         back: "← Back",
         confirm: "Confirm",
         sold: "SOLD",
@@ -111,6 +145,14 @@ const texts = {
         applied: "Already selected",
         owned: "Owned",
         activeLabel: "✓ Selected",
+        volume: "Volume",
+        sound: "Sounds",
+        vibration: "Vibration",
+        vibrationHint: "Works on phones only",
+        animations: "Background animation",
+        confirmReset: "Ask before reset",
+        resetConfirm: "Really reset all progress? Points, purchases and designs will be lost.",
+        language: "Language",
         items: {
             x2: { name: "Click ×2", description: "Every click gives 2 points instead of 1." },
             auto: { name: "Auto-clicker", description: "Adds 1 point every second by itself." }
@@ -130,7 +172,7 @@ const texts = {
             },
             winter: {
                 name: "Eternal Winter",
-                description: "The blizzard has buried every road, and only one small window still glows. The board is covered in frost, the button is cold and soft like fresh snow, and the reset button smells of peppermint candy. Keep clicking before your fingers freeze. They say this winter won't end until someone reaches a million…"
+                description: "The blizzard has buried every road, and only the windows of a small village still glow. The board is covered in frost, the button is cold and soft like fresh snow, and the reset button smells of peppermint candy. Keep clicking before your fingers freeze. They say this winter won't end until someone reaches a million…"
             }
         }
     },
@@ -143,6 +185,7 @@ const texts = {
         win: "Hurra, herzlichen Glückwunsch!!!",
         shop: "Shop",
         designs: "Designs",
+        settings: "Einstellungen",
         back: "← Zurück",
         confirm: "Bestätigen",
         sold: "VERKAUFT",
@@ -153,6 +196,14 @@ const texts = {
         applied: "Bereits ausgewählt",
         owned: "Gekauft",
         activeLabel: "✓ Ausgewählt",
+        volume: "Lautstärke",
+        sound: "Töne",
+        vibration: "Vibration",
+        vibrationHint: "Funktioniert nur auf Handys",
+        animations: "Hintergrundanimation",
+        confirmReset: "Vor dem Zurücksetzen fragen",
+        resetConfirm: "Wirklich den ganzen Fortschritt zurücksetzen? Punkte, Käufe und Designs gehen verloren.",
+        language: "Sprache",
         items: {
             x2: { name: "Klick ×2", description: "Jeder Klick bringt 2 Punkte statt 1." },
             auto: { name: "Autoklicker", description: "Fügt jede Sekunde von selbst 1 Punkt hinzu." }
@@ -172,7 +223,7 @@ const texts = {
             },
             winter: {
                 name: "Ewiger Winter",
-                description: "Der Schneesturm hat alle Wege begraben, und nur in einem kleinen Fenster brennt noch Licht. Die Anzeige ist mit Raureif bedeckt, der Knopf ist kalt und weich wie frischer Schnee, und der Zurücksetzen-Knopf duftet nach Pfefferminzbonbons. Klick weiter, bevor deine Finger erfrieren. Man sagt, dieser Winter endet erst, wenn jemand eine Million erreicht…"
+                description: "Der Schneesturm hat alle Wege begraben, und nur in den Fenstern eines kleinen Dorfes brennt noch Licht. Die Anzeige ist mit Raureif bedeckt, der Knopf ist kalt und weich wie frischer Schnee, und der Zurücksetzen-Knopf duftet nach Pfefferminzbonbons. Klick weiter, bevor deine Finger erfrieren. Man sagt, dieser Winter endet erst, wenn jemand eine Million erreicht…"
             }
         }
     }
@@ -191,6 +242,60 @@ function itemText(item) {
 // Название и описание дизайна на текущем языке
 function themeText(theme) {
     return texts[lang].themes[theme.id];
+}
+
+// ===== Звуки и вибрация =====
+// Звуки не из файлов — их «играет» браузер через Web Audio API
+
+let audioCtx = null;
+
+// Ноты для каждого звука: [частота в герцах, когда начать (сек), длительность (сек)]
+const sounds = {
+    click: { wave: "triangle", notes: [[660, 0, 0.06]] },
+    buy:   { wave: "triangle", notes: [[523, 0, 0.1], [659, 0.1, 0.1], [784, 0.2, 0.2]] },
+    error: { wave: "sawtooth", notes: [[180, 0, 0.2]] },
+    win:   { wave: "triangle", notes: [[523, 0, 0.12], [659, 0.12, 0.12], [784, 0.24, 0.12], [1047, 0.36, 0.35]] }
+};
+
+function playSound(name) {
+    if (!settings.sound || settings.volume === 0) return;
+
+    try {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === "suspended") {
+            audioCtx.resume();
+        }
+    } catch (e) {
+        return; // браузер не умеет — просто без звука
+    }
+
+    const sound = sounds[name];
+    const volume = (settings.volume / 100) * 0.3; // 0.3 — чтобы на максимуме не оглушало
+
+    sound.notes.forEach(function (note) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const start = audioCtx.currentTime + note[1];
+        const end = start + note[2];
+
+        osc.type = sound.wave;
+        osc.frequency.value = note[0];
+        gain.gain.setValueAtTime(volume, start);
+        gain.gain.exponentialRampToValueAtTime(0.0001, end); // плавное затухание
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(start);
+        osc.stop(end + 0.02);
+    });
+}
+
+function vibrate(pattern) {
+    if (settings.vibration && navigator.vibrate) {
+        navigator.vibrate(pattern);
+    }
 }
 
 // ===== Товары магазина улучшений =====
@@ -237,11 +342,13 @@ function setThemeClass(el, themeId) {
     el.classList.add("theme-" + themeId);
 }
 
-// Включить дизайн на экране игры
+// Включить дизайн на всех экранах: и в игре, и в меню
 function applyTheme(themeId) {
     activeTheme = themeId;
-    setThemeClass(gameScreen, themeId);
-    fillDecor(gameScreen.querySelector(".decor"), themeId);
+    allScreens.forEach(function (screen) {
+        setThemeClass(screen, themeId);
+        fillDecor(screen.querySelector(".decor"), themeId);
+    });
 }
 
 // ===== Декорации заднего фона =====
@@ -314,6 +421,98 @@ function svgTree(x, base, h, color) {
         const top = bottom - h * 0.4;
         s += `<polygon points="${x - w / 2},${bottom} ${x + w / 2},${bottom} ${x},${top}" fill="${color}"/>`;
         s += `<polygon points="${x - w * 0.18},${top + h * 0.12} ${x + w * 0.18},${top + h * 0.12} ${x},${top}" fill="#fff" opacity="0.9"/>`;
+    }
+    return s;
+}
+
+// Деревенский дом: стены, крыша со снегом, труба с дымом, окна (часть горит) и дверь.
+// x — левый край, base — низ стены, w/h — ширина/высота стены
+function svgHouse(x, base, w, h, wall, roof, random) {
+    const top = base - h;
+    const roofH = w * 0.45;
+    const small = w < 50; // дальние домики рисуем попроще
+    let s = "";
+
+    // труба (рисуем до крыши — крыша закроет её низ) и дым
+    const cx = x + w * 0.68;
+    const cw = Math.max(4, w * 0.11);
+    const ctop = top - roofH * 0.95;
+    s += `<rect x="${cx}" y="${ctop}" width="${cw}" height="${roofH * 0.6}" fill="${wall}"/>`;
+    s += `<rect x="${cx - 2}" y="${ctop - 3}" width="${cw + 4}" height="5" rx="2" fill="#fff"/>`;
+    if (!small) {
+        for (let k = 0; k < 3; k++) {
+            s += `<circle class="smoke" cx="${cx + cw / 2}" cy="${ctop - 8}" r="${5 + k * 2}" fill="#dfe7f3" style="animation-delay:${-k * 2.7}s"/>`;
+        }
+    }
+
+    // стены
+    s += `<rect x="${x}" y="${top}" width="${w}" height="${h}" fill="${wall}"/>`;
+
+    // крыша и снег на ней
+    s += `<polygon points="${x - 8},${top + 2} ${x + w / 2},${top - roofH} ${x + w + 8},${top + 2}" fill="${roof}"/>`;
+    s += `<polygon points="${x - 10},${top + 4} ${x + w / 2},${top - roofH - 4} ${x + w + 10},${top + 4} ` +
+         `${x + w - 2},${top + 4} ${x + w / 2},${top - roofH + 8} ${x + 2},${top + 4}" fill="#fff"/>`;
+
+    // окна
+    const ww = small ? 7 : w * 0.16;
+    const wh = small ? 6 : w * 0.14;
+    const cols = small ? [x + w * 0.55] : (w >= 80 ? [x + w * 0.42, x + w * 0.72] : [x + w * 0.58]);
+    const rows = h > 60 ? [top + h * 0.15, top + h * 0.55] : [top + h * 0.28];
+    rows.forEach(function (wy) {
+        cols.forEach(function (wx) {
+            const lit = random() < 0.75; // большинство окон горит
+            if (lit) {
+                s += `<circle cx="${wx + ww / 2}" cy="${wy + wh / 2}" r="${ww * 1.4}" fill="#ffd36b" opacity="0.15"/>`;
+            }
+            s += `<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="${lit ? "#ffd36b" : "#1b2a44"}"/>`;
+            if (!small) {
+                s += `<path d="M${wx + ww / 2} ${wy} v${wh} M${wx} ${wy + wh / 2} h${ww}" stroke="${wall}" stroke-width="1.5"/>`;
+                s += `<rect x="${wx - 2}" y="${wy + wh}" width="${ww + 4}" height="3" fill="#fff"/>`; // снег на подоконнике
+            }
+        });
+    });
+
+    // дверь
+    if (!small) {
+        s += `<rect x="${x + w * 0.1}" y="${base - h * 0.5}" width="${w * 0.17}" height="${h * 0.5}" fill="#2a1a10"/>`;
+        s += `<circle cx="${x + w * 0.24}" cy="${base - h * 0.25}" r="1.5" fill="#ffd36b"/>`;
+    }
+
+    return s;
+}
+
+// Церковь: здание, колокольня со шпилем и крестом, круглое окно и светящийся вход
+function svgChurch(cx, base) {
+    let s = "";
+    s += `<rect x="${cx - 38}" y="${base - 55}" width="76" height="55" fill="#e9e2d6"/>`;
+    s += `<polygon points="${cx - 44},${base - 53} ${cx},${base - 82} ${cx + 44},${base - 53}" fill="#3a4a6b"/>`;
+    s += `<polygon points="${cx - 46},${base - 51} ${cx},${base - 86} ${cx + 46},${base - 51} ${cx + 38},${base - 51} ${cx},${base - 76} ${cx - 38},${base - 51}" fill="#fff"/>`;
+    s += `<rect x="${cx - 13}" y="${base - 110}" width="26" height="58" fill="#ddd5c7"/>`;                 // колокольня
+    s += `<polygon points="${cx - 18},${base - 108} ${cx},${base - 150} ${cx + 18},${base - 108}" fill="#3a4a6b"/>`; // шпиль
+    s += `<polygon points="${cx - 18},${base - 108} ${cx},${base - 118} ${cx + 18},${base - 108}" fill="#fff"/>`;
+    s += `<path d="M${cx} ${base - 150} v-16 M${cx - 6} ${base - 160} h12" stroke="#f2d27a" stroke-width="3"/>`; // крест
+    s += `<circle cx="${cx}" cy="${base - 92}" r="6" fill="#ffd36b"/>`;                                     // круглое окно
+    s += `<circle cx="${cx}" cy="${base - 14}" r="26" fill="#ffd36b" opacity="0.15"/>`;
+    s += `<path d="M${cx - 9} ${base} v-18 a9 9 0 0 1 18 0 v18 z" fill="#ffd36b"/>`;                     // вход
+    s += `<rect x="${cx - 30}" y="${base - 40}" width="9" height="16" rx="4" fill="#ffd36b"/>`;
+    s += `<rect x="${cx + 21}" y="${base - 40}" width="9" height="16" rx="4" fill="#ffd36b"/>`;
+    return s;
+}
+
+// Уличный фонарь с тёплым светом
+function svgLantern(x, base) {
+    return `<circle cx="${x}" cy="${base - 36}" r="22" fill="#ffd36b" opacity="0.18"/>` +
+           `<rect x="${x - 1.5}" y="${base - 34}" width="3" height="34" fill="#1d2433"/>` +
+           `<rect x="${x - 5}" y="${base - 44}" width="10" height="11" rx="2" fill="#ffd36b"/>` +
+           `<rect x="${x - 7}" y="${base - 47}" width="14" height="4" rx="2" fill="#fff"/>`;
+}
+
+// Деревянный заборчик со снегом на столбиках
+function svgFence(from, to, base) {
+    let s = `<path d="M${from} ${base - 14} H${to} M${from} ${base - 6} H${to}" stroke="#5a4030" stroke-width="3"/>`;
+    for (let x = from; x <= to; x += 20) {
+        s += `<rect x="${x - 2.5}" y="${base - 20}" width="5" height="20" fill="#5a4030"/>`;
+        s += `<rect x="${x - 3.5}" y="${base - 23}" width="7" height="4" rx="2" fill="#fff"/>`;
     }
     return s;
 }
@@ -426,98 +625,6 @@ const scenery = {
     }
 };
 
-// Деревенский дом: стены, крыша со снегом, труба с дымом, окна (часть горит) и дверь.
-// x — левый край, base — низ стены, w/h — ширина/высота стены
-function svgHouse(x, base, w, h, wall, roof, random) {
-    const top = base - h;
-    const roofH = w * 0.45;
-    const small = w < 50; // дальние домики рисуем попроще
-    let s = "";
-
-    // труба (рисуем до крыши — крыша закроет её низ) и дым
-    const cx = x + w * 0.68;
-    const cw = Math.max(4, w * 0.11);
-    const ctop = top - roofH * 0.95;
-    s += `<rect x="${cx}" y="${ctop}" width="${cw}" height="${roofH * 0.6}" fill="${wall}"/>`;
-    s += `<rect x="${cx - 2}" y="${ctop - 3}" width="${cw + 4}" height="5" rx="2" fill="#fff"/>`;
-    if (!small) {
-        for (let k = 0; k < 3; k++) {
-            s += `<circle class="smoke" cx="${cx + cw / 2}" cy="${ctop - 8}" r="${5 + k * 2}" fill="#dfe7f3" style="animation-delay:${-k * 2.7}s"/>`;
-        }
-    }
-
-    // стены
-    s += `<rect x="${x}" y="${top}" width="${w}" height="${h}" fill="${wall}"/>`;
-
-    // крыша и снег на ней
-    s += `<polygon points="${x - 8},${top + 2} ${x + w / 2},${top - roofH} ${x + w + 8},${top + 2}" fill="${roof}"/>`;
-    s += `<polygon points="${x - 10},${top + 4} ${x + w / 2},${top - roofH - 4} ${x + w + 10},${top + 4} ` +
-         `${x + w - 2},${top + 4} ${x + w / 2},${top - roofH + 8} ${x + 2},${top + 4}" fill="#fff"/>`;
-
-    // окна
-    const ww = small ? 7 : w * 0.16;
-    const wh = small ? 6 : w * 0.14;
-    const cols = small ? [x + w * 0.55] : (w >= 80 ? [x + w * 0.42, x + w * 0.72] : [x + w * 0.58]);
-    const rows = h > 60 ? [top + h * 0.15, top + h * 0.55] : [top + h * 0.28];
-    rows.forEach(function (wy) {
-        cols.forEach(function (wx) {
-            const lit = random() < 0.75; // большинство окон горит
-            if (lit) {
-                s += `<circle cx="${wx + ww / 2}" cy="${wy + wh / 2}" r="${ww * 1.4}" fill="#ffd36b" opacity="0.15"/>`;
-            }
-            s += `<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="${lit ? "#ffd36b" : "#1b2a44"}"/>`;
-            if (!small) {
-                s += `<path d="M${wx + ww / 2} ${wy} v${wh} M${wx} ${wy + wh / 2} h${ww}" stroke="${wall}" stroke-width="1.5"/>`;
-                s += `<rect x="${wx - 2}" y="${wy + wh}" width="${ww + 4}" height="3" fill="#fff"/>`; // снег на подоконнике
-            }
-        });
-    });
-
-    // дверь
-    if (!small) {
-        s += `<rect x="${x + w * 0.1}" y="${base - h * 0.5}" width="${w * 0.17}" height="${h * 0.5}" fill="#2a1a10"/>`;
-        s += `<circle cx="${x + w * 0.24}" cy="${base - h * 0.25}" r="1.5" fill="#ffd36b"/>`;
-    }
-
-    return s;
-}
-
-// Церковь: здание, колокольня со шпилем и крестом, круглое окно и светящийся вход
-function svgChurch(cx, base) {
-    let s = "";
-    s += `<rect x="${cx - 38}" y="${base - 55}" width="76" height="55" fill="#e9e2d6"/>`;
-    s += `<polygon points="${cx - 44},${base - 53} ${cx},${base - 82} ${cx + 44},${base - 53}" fill="#3a4a6b"/>`;
-    s += `<polygon points="${cx - 46},${base - 51} ${cx},${base - 86} ${cx + 46},${base - 51} ${cx + 38},${base - 51} ${cx},${base - 76} ${cx - 38},${base - 51}" fill="#fff"/>`;
-    s += `<rect x="${cx - 13}" y="${base - 110}" width="26" height="58" fill="#ddd5c7"/>`;                 // колокольня
-    s += `<polygon points="${cx - 18},${base - 108} ${cx},${base - 150} ${cx + 18},${base - 108}" fill="#3a4a6b"/>`; // шпиль
-    s += `<polygon points="${cx - 18},${base - 108} ${cx},${base - 118} ${cx + 18},${base - 108}" fill="#fff"/>`;
-    s += `<path d="M${cx} ${base - 150} v-16 M${cx - 6} ${base - 160} h12" stroke="#f2d27a" stroke-width="3"/>`; // крест
-    s += `<circle cx="${cx}" cy="${base - 92}" r="6" fill="#ffd36b"/>`;                                     // круглое окно
-    s += `<circle cx="${cx}" cy="${base - 14}" r="26" fill="#ffd36b" opacity="0.15"/>`;
-    s += `<path d="M${cx - 9} ${base} v-18 a9 9 0 0 1 18 0 v18 z" fill="#ffd36b"/>`;                     // вход
-    s += `<rect x="${cx - 30}" y="${base - 40}" width="9" height="16" rx="4" fill="#ffd36b"/>`;
-    s += `<rect x="${cx + 21}" y="${base - 40}" width="9" height="16" rx="4" fill="#ffd36b"/>`;
-    return s;
-}
-
-// Уличный фонарь с тёплым светом
-function svgLantern(x, base) {
-    return `<circle cx="${x}" cy="${base - 36}" r="22" fill="#ffd36b" opacity="0.18"/>` +
-           `<rect x="${x - 1.5}" y="${base - 34}" width="3" height="34" fill="#1d2433"/>` +
-           `<rect x="${x - 5}" y="${base - 44}" width="10" height="11" rx="2" fill="#ffd36b"/>` +
-           `<rect x="${x - 7}" y="${base - 47}" width="14" height="4" rx="2" fill="#fff"/>`;
-}
-
-// Деревянный заборчик со снегом на столбиках
-function svgFence(from, to, base) {
-    let s = `<path d="M${from} ${base - 14} H${to} M${from} ${base - 6} H${to}" stroke="#5a4030" stroke-width="3"/>`;
-    for (let x = from; x <= to; x += 20) {
-        s += `<rect x="${x - 2.5}" y="${base - 20}" width="5" height="20" fill="#5a4030"/>`;
-        s += `<rect x="${x - 3.5}" y="${base - 23}" width="7" height="4" rx="2" fill="#fff"/>`;
-    }
-    return s;
-}
-
 // Заполнить слой декораций под нужный дизайн
 function fillDecor(decorEl, themeId) {
     const random = makeRandom(themeId);
@@ -565,6 +672,8 @@ function setLanguage(newLang) {
     document.title = t("title");
     shopIcon.title = t("shop");
     themesIcon.title = t("designs");
+    settingsIcon.title = t("settings");
+    langSelect.value = lang;
 
     // Все элементы с data-i18n="ключ" получают текст из словаря
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
@@ -670,6 +779,81 @@ function loadLanguage() {
     return texts[saved] ? saved : "ru";
 }
 
+// ===== Настройки =====
+
+const SETTINGS_KEY = "clickerSettings";
+
+function saveSettings() {
+    try {
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    } catch (e) {}
+}
+
+function loadSettings() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+        if (!saved) return;
+        // берём только известные настройки нужного типа
+        Object.keys(settings).forEach(function (key) {
+            if (typeof saved[key] === typeof settings[key]) {
+                settings[key] = saved[key];
+            }
+        });
+    } catch (e) {}
+}
+
+// Показать настройки на экране и применить их
+function applySettings() {
+    volumeRange.value = settings.volume;
+    volumeValue.textContent = settings.volume + "%";
+    volumeRange.disabled = !settings.sound; // без звука громкость не нужна
+    soundToggle.checked = settings.sound;
+    vibrationToggle.checked = settings.vibration;
+    animToggle.checked = settings.animations;
+    confirmResetToggle.checked = settings.confirmReset;
+    document.body.classList.toggle("no-anim", !settings.animations);
+}
+
+// Ползунок двигают — сразу меняем громкость
+volumeRange.addEventListener("input", function () {
+    settings.volume = Number(volumeRange.value);
+    volumeValue.textContent = settings.volume + "%";
+    saveSettings();
+});
+
+// Ползунок отпустили — проигрываем звук, чтобы было слышно новую громкость
+volumeRange.addEventListener("change", function () {
+    playSound("click");
+});
+
+soundToggle.addEventListener("change", function () {
+    settings.sound = soundToggle.checked;
+    saveSettings();
+    applySettings();
+    playSound("click");
+});
+
+vibrationToggle.addEventListener("change", function () {
+    settings.vibration = vibrationToggle.checked;
+    saveSettings();
+    vibrate(40); // если включили — телефон коротко вздрогнет
+});
+
+animToggle.addEventListener("change", function () {
+    settings.animations = animToggle.checked;
+    saveSettings();
+    applySettings();
+});
+
+confirmResetToggle.addEventListener("change", function () {
+    settings.confirmReset = confirmResetToggle.checked;
+    saveSettings();
+});
+
+langSelect.addEventListener("change", function () {
+    setLanguage(langSelect.value);
+});
+
 // ===== Очки =====
 
 // Добавить очки и обновить экран
@@ -677,8 +861,10 @@ function addPoints(amount) {
     count += amount;
 
     // >= а не ===, потому что счёт может перескочить через 10
-    if (count >= 10) {
+    if (!won && count >= 10) {
         won = true;
+        playSound("win");
+        vibrate([60, 40, 60]);
     }
 
     updateScreen();
@@ -704,10 +890,14 @@ function updateScreen() {
 // ===== Переключение экранов =====
 
 function showScreen(screen) {
-    gameScreen.classList.remove("active");
-    shopScreen.classList.remove("active");
-    themesScreen.classList.remove("active");
+    allScreens.forEach(function (s) {
+        s.classList.remove("active");
+    });
     screen.classList.add("active");
+    window.scrollTo(0, 0);
+
+    // стрелки карусели можно посчитать только когда экран виден
+    screen.querySelectorAll(".cards").forEach(updateCarousel);
 }
 
 shopIcon.addEventListener("click", function () {
@@ -729,10 +919,72 @@ themesBackBtn.addEventListener("click", function () {
     showScreen(gameScreen);
 });
 
+settingsIcon.addEventListener("click", function () {
+    showScreen(settingsScreen);
+});
+
+settingsBackBtn.addEventListener("click", function () {
+    showScreen(gameScreen);
+});
+
+// ===== Карусель: горизонтальное листание карточек =====
+
+const CARD_GAP = 24; // расстояние между карточками (как gap в CSS)
+
+function setupCarousel(cards) {
+    const carousel = cards.parentElement;
+    const prev = carousel.querySelector(".prev");
+    const next = carousel.querySelector(".next");
+
+    // на сколько листать стрелкой — на одну карточку
+    function step() {
+        const card = cards.querySelector(".card");
+        return card ? card.offsetWidth + CARD_GAP : 300;
+    }
+
+    prev.addEventListener("click", function () {
+        cards.scrollBy({ left: -step(), behavior: "smooth" });
+    });
+    next.addEventListener("click", function () {
+        cards.scrollBy({ left: step(), behavior: "smooth" });
+    });
+
+    // колёсико мыши листает вбок
+    cards.addEventListener("wheel", function (e) {
+        if (cards.scrollWidth <= cards.clientWidth) return;
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            e.preventDefault();
+            cards.scrollLeft += e.deltaY;
+        }
+    }, { passive: false });
+
+    cards.addEventListener("scroll", function () {
+        updateCarousel(cards);
+    });
+}
+
+// Включить/выключить стрелки: в начале нельзя назад, в конце — вперёд
+function updateCarousel(cards) {
+    const carousel = cards.parentElement;
+    const canScroll = cards.scrollWidth > cards.clientWidth + 2;
+    carousel.classList.toggle("no-scroll", !canScroll);
+    carousel.querySelector(".prev").disabled = cards.scrollLeft <= 2;
+    carousel.querySelector(".next").disabled = cards.scrollLeft + cards.clientWidth >= cards.scrollWidth - 2;
+}
+
+setupCarousel(cardsEl);
+setupCarousel(themeCardsEl);
+
+window.addEventListener("resize", function () {
+    updateCarousel(cardsEl);
+    updateCarousel(themeCardsEl);
+});
+
 // ===== Магазин улучшений =====
 
 // Рисуем карточки товаров заново
 function renderShop() {
+    const scroll = cardsEl.scrollLeft; // запоминаем, куда пролистано
     cardsEl.innerHTML = "";
 
     shopItems.forEach(function (item) {
@@ -778,6 +1030,7 @@ function renderShop() {
 
             item.bought = true;
             item.buy();
+            playSound("buy");
             closeInfo();
             updateScreen();
             saveGame();
@@ -785,6 +1038,9 @@ function renderShop() {
 
         cardsEl.append(card);
     });
+
+    cardsEl.scrollLeft = scroll; // возвращаем прокрутку на место
+    updateCarousel(cardsEl);
 }
 
 // Выбрать товар: подсветить карточку и показать плашку
@@ -812,12 +1068,16 @@ confirmBtn.addEventListener("click", function () {
 
     if (count < item.price) {
         shopError.textContent = t("notEnough", item.price - count);
+        playSound("error");
+        vibrate(120);
         return;
     }
 
     count -= item.price;
     item.bought = true;
     item.buy();
+    playSound("buy");
+    vibrate([30, 40, 30]);
 
     closeInfo();
     updateScreen();
@@ -845,6 +1105,7 @@ function makePreview(theme) {
 
 // Рисуем карточки дизайнов заново
 function renderThemes() {
+    const scroll = themeCardsEl.scrollLeft; // запоминаем, куда пролистано
     themeCardsEl.innerHTML = "";
 
     themes.forEach(function (theme) {
@@ -897,6 +1158,7 @@ function renderThemes() {
                 ownedThemes.push(theme.id);
             }
             applyTheme(theme.id);
+            playSound("buy");
             updateScreen();
             saveGame();
             closeThemeInfo();
@@ -904,6 +1166,9 @@ function renderThemes() {
 
         themeCardsEl.append(card);
     });
+
+    themeCardsEl.scrollLeft = scroll; // возвращаем прокрутку на место
+    updateCarousel(themeCardsEl);
 }
 
 // Текст и состояние кнопки на плашке: купить / применить / уже выбрано
@@ -950,6 +1215,8 @@ themeActionBtn.addEventListener("click", function () {
     if (!ownedThemes.includes(theme.id)) {
         if (count < theme.price) {
             themeError.textContent = t("notEnough", theme.price - count);
+            playSound("error");
+            vibrate(120);
             return;
         }
         count -= theme.price;
@@ -957,6 +1224,8 @@ themeActionBtn.addEventListener("click", function () {
     }
 
     applyTheme(theme.id);
+    playSound("buy");
+    vibrate([30, 40, 30]);
     updateScreen();
     saveGame();
     closeThemeInfo();
@@ -980,6 +1249,8 @@ function handleClick(source) {
 
     lastClickTime = now;
     lastClickSource = source;
+    playSound("click");
+    vibrate(15);
     addPoints(clickPower);
 }
 
@@ -993,7 +1264,7 @@ clickBtn.addEventListener("mousedown", function (e) {
 document.addEventListener("keydown", function (e) {
     if (e.code !== "KeyE") return;                       // KeyE — работает и на русской раскладке (буква У)
     if (e.repeat) return;                                // зажатая клавиша не кликает сама
-    if (!gameScreen.classList.contains("active")) return; // в магазинах E не работает
+    if (!gameScreen.classList.contains("active")) return; // в меню E не работает
 
     handleClick("key");
 
@@ -1004,8 +1275,12 @@ document.addEventListener("keydown", function (e) {
     }, 100);
 });
 
-// Сброс — всё возвращаем в начальное состояние (язык остаётся прежним)
+// Сброс — всё возвращаем в начальное состояние (язык и настройки остаются)
 resetBtn.addEventListener("click", function () {
+    if (settings.confirmReset && !confirm(t("resetConfirm"))) {
+        return; // передумали
+    }
+
     count = 0;
     clickPower = 1;
     autoPerSecond = 0;
@@ -1029,6 +1304,8 @@ resetBtn.addEventListener("click", function () {
 });
 
 // ===== Запуск =====
+loadSettings();              // настройки
+applySettings();
 loadGame();                  // прогресс
-applyTheme(activeTheme);     // дизайн
+applyTheme(activeTheme);     // дизайн на всех экранах
 setLanguage(loadLanguage()); // язык (заодно рисует магазины и табло)
