@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер</title>
+    <link rel="stylesheet" href="clicker.css">
+</head>
+<body>
+    <div id="score">0</div>
+    <div id="power">+1 за клик</div>
+    <button id="clickBtn">Жми сюда</button>
+    <div id="message"></div>
+    <button id="resetBtn">Сброс</button>
+
+    <!-- Магазин -->
+    <div id="shop">
+        <h2>Магазин</h2>
+
+        <!-- Товар: Клик ×2 -->
+        <div class="shop-entry" data-item="x2">
+            <div class="shop-item">
+                <span class="item-name">Клик ×2</span>
+                <span class="item-price">20 кликов</span>
+            </div>
+            <div class="item-info">
+                <p>Каждый клик будет давать 2 очка вместо 1.</p>
+                <button class="confirm-btn">Подтвердить</button>
+                <div class="shop-error"></div>
+            </div>
+        </div>
+
+        <!-- Товар: Автокликер -->
+        <div class="shop-entry" data-item="auto">
+            <div class="shop-item">
+                <span class="item-name">Автокликер</span>
+                <span class="item-price">50 кликов</span>
+            </div>
+            <div class="item-info">
+                <p>Каждую секунду сам добавляет 1 очко.</p>
+                <button class="confirm-btn">Подтвердить</button>
+                <div class="shop-error"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js-test.js"></script>
+</body>
+</html>
