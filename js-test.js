@@ -26,8 +26,10 @@ let selectedItem = null; // какой товар сейчас выбран в �
 
 // ===== Товары магазина =====
 // Чтобы добавить товар — просто допиши ещё один объект в этот список
+// id — короткое имя товара, по нему он запоминается в сохранении
 const shopItems = [
     {
+        id: "x2",
         name: "Клик ×2",
         icon: "👆",
         price: 20,
@@ -38,6 +40,7 @@ const shopItems = [
         }
     },
     {
+        id: "auto",
         name: "Автокликер",
         icon: "🤖",
         price: 50,
@@ -52,6 +55,51 @@ const shopItems = [
     }
 ];
 
+// ===== Сохранение прогресса =====
+// localStorage — хранилище браузера, оно не очищается при обновлении страницы
+
+const SAVE_KEY = "clickerSave";
+
+function saveGame() {
+    const data = {
+        count: count,
+        won: messageEl.textContent !== "", // показана ли уже надпись «Ура»
+        bought: shopItems
+            .filter(function (item) { return item.bought; })
+            .map(function (item) { return item.id; })   // например ["x2", "auto"]
+    };
+
+    try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+    } catch (e) {
+        // хранилище может быть недоступно (например, в режиме инкогнито) — тогда просто не сохраняем
+    }
+}
+
+function loadGame() {
+    let data = null;
+    try {
+        data = JSON.parse(localStorage.getItem(SAVE_KEY));
+    } catch (e) {
+        data = null;
+    }
+    if (!data) return; // сохранения нет — начинаем с нуля
+
+    count = data.count || 0;
+
+    if (data.won) {
+        messageEl.textContent = "Ура, поздравляю!!!";
+    }
+
+    // Заново «покупаем» купленные товары, чтобы вернулись их бонусы
+    shopItems.forEach(function (item) {
+        if (data.bought && data.bought.includes(item.id)) {
+            item.bought = true;
+            item.buy();
+        }
+    });
+}
+
 // ===== Очки =====
 
 // Добавить очки и обновить экран
@@ -63,6 +111,8 @@ function addPoints(amount) {
     if (count >= 10) {
         messageEl.textContent = "Ура, поздравляю!!!";
     }
+
+    saveGame();
 }
 
 // Обновляем табло, баланс в магазине и строку с бонусами
@@ -173,6 +223,7 @@ confirmBtn.addEventListener("click", function () {
 
     closeInfo();
     updateScreen();
+    saveGame();
 });
 
 // ===== Кнопки экрана игры =====
@@ -198,8 +249,10 @@ resetBtn.addEventListener("click", function () {
 
     closeInfo();
     updateScreen();
+    saveGame(); // сохраняем «чистое» состояние
 });
 
-// Первая отрисовка
+// Загружаем сохранение и рисуем экран
+loadGame();
 renderShop();
 updateScreen();
