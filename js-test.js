@@ -44,6 +44,7 @@ const volumeValue = document.getElementById("volumeValue");
 const soundToggle = document.getElementById("soundToggle");
 const vibrationToggle = document.getElementById("vibrationToggle");
 const animToggle = document.getElementById("animToggle");
+const featuresToggle = document.getElementById("featuresToggle");
 const confirmResetToggle = document.getElementById("confirmResetToggle");
 const langSelect = document.getElementById("langSelect");
 
@@ -73,6 +74,7 @@ const settings = {
     sound: true,        // звуки вкл/выкл
     vibration: true,    // вибрация (работает на телефонах)
     animations: true,   // анимация фона
+    features: true,     // особенности дизайнов (машина, лёд, акула, скример)
     confirmReset: true  // спрашивать перед сбросом
 };
 
@@ -109,6 +111,24 @@ const texts = {
         confirmReset: "Спрашивать перед сбросом",
         resetConfirm: "Точно сбросить весь прогресс? Очки, покупки и дизайны пропадут.",
         language: "Язык",
+        frozen: "Курсор замёрз! Кликай, чтобы разбить лёд",
+        unfrozen: "Лёд разбит!",
+        sharkAppears: "Осторожно, акула!",
+        sharkBite: "Акула укусила! −100",
+        shieldOn: "Защита! Кликни по акуле 10 раз за 9 секунд",
+        shieldOver: "Не успел — защита кончилась!",
+        features: "Особенности дизайнов",
+        featuresHint: "Машина, лёд, акула и скример",
+        needShield: "Без защиты не справиться — съешь золотую рыбку",
+        sharkGone: "Акула уплыла!",
+        neonPhrases: [
+            "Ты поймал сигнал из будущего",
+            "Неон помнит твоё имя",
+            "Скорость — это стиль жизни",
+            "Система взломана… шучу",
+            "Ночь принадлежит тебе",
+            "Ещё один кадр для легенды"
+        ],
         items: {
             x2: { name: "Клик ×2", description: "Каждый клик будет давать 2 очка вместо 1." },
             auto: { name: "Автокликер", description: "Каждую секунду сам добавляет 1 очко." }
@@ -182,6 +202,24 @@ const texts = {
         confirmReset: "Ask before reset",
         resetConfirm: "Really reset all progress? Points, purchases and designs will be lost.",
         language: "Language",
+        frozen: "Your cursor froze! Click to break the ice",
+        unfrozen: "Ice broken!",
+        sharkAppears: "Watch out, shark!",
+        sharkBite: "The shark bit you! −100",
+        shieldOn: "Shield! Hit the shark 10 times in 9 seconds",
+        shieldOver: "Too slow — the shield ran out!",
+        features: "Design features",
+        featuresHint: "Car, ice, shark and screamer",
+        needShield: "You can't do it without a shield — eat the golden fish",
+        sharkGone: "The shark swam away!",
+        neonPhrases: [
+            "You caught a signal from the future",
+            "The neon remembers your name",
+            "Speed is a lifestyle",
+            "System hacked… just kidding",
+            "The night belongs to you",
+            "One more frame for the legend"
+        ],
         items: {
             x2: { name: "Click ×2", description: "Every click gives 2 points instead of 1." },
             auto: { name: "Auto-clicker", description: "Adds 1 point every second by itself." }
@@ -255,6 +293,24 @@ const texts = {
         confirmReset: "Vor dem Zurücksetzen fragen",
         resetConfirm: "Wirklich den ganzen Fortschritt zurücksetzen? Punkte, Käufe und Designs gehen verloren.",
         language: "Sprache",
+        frozen: "Dein Cursor ist eingefroren! Klick, um das Eis zu brechen",
+        unfrozen: "Eis zerbrochen!",
+        sharkAppears: "Achtung, Hai!",
+        sharkBite: "Der Hai hat zugebissen! −100",
+        shieldOn: "Schutz! Triff den Hai 10-mal in 9 Sekunden",
+        shieldOver: "Zu langsam — der Schutz ist vorbei!",
+        features: "Design-Besonderheiten",
+        featuresHint: "Auto, Eis, Hai und Schreckmoment",
+        needShield: "Ohne Schutz geht es nicht — friss den goldenen Fisch",
+        sharkGone: "Der Hai ist weggeschwommen!",
+        neonPhrases: [
+            "Du hast ein Signal aus der Zukunft empfangen",
+            "Das Neon kennt deinen Namen",
+            "Geschwindigkeit ist ein Lebensstil",
+            "System gehackt… nur Spaß",
+            "Die Nacht gehört dir",
+            "Noch ein Bild für die Legende"
+        ],
         items: {
             x2: { name: "Klick ×2", description: "Jeder Klick bringt 2 Punkte statt 1." },
             auto: { name: "Autoklicker", description: "Fügt jede Sekunde von selbst 1 Punkt hinzu." }
@@ -325,7 +381,13 @@ const sounds = {
     click: { wave: "triangle", notes: [[660, 0, 0.06]] },
     buy:   { wave: "triangle", notes: [[523, 0, 0.1], [659, 0.1, 0.1], [784, 0.2, 0.2]] },
     error: { wave: "sawtooth", notes: [[180, 0, 0.2]] },
-    win:   { wave: "triangle", notes: [[523, 0, 0.12], [659, 0.12, 0.12], [784, 0.24, 0.12], [1047, 0.36, 0.35]] }
+    win:   { wave: "triangle", notes: [[523, 0, 0.12], [659, 0.12, 0.12], [784, 0.24, 0.12], [1047, 0.36, 0.35]] },
+    bonus: { wave: "square",   notes: [[988, 0, 0.08], [1319, 0.08, 0.2]] },                      // монетка
+    bite:  { wave: "sawtooth", notes: [[140, 0, 0.3], [90, 0.12, 0.35]] },                       // укус акулы
+    hit:   { wave: "square",   notes: [[300, 0, 0.07]] },                                        // удар по акуле
+    crack: { wave: "square",   notes: [[1900, 0, 0.03], [900, 0.02, 0.05]] },                    // трещина во льду
+    shatter: { wave: "triangle", notes: [[2100, 0, 0.06], [1700, 0.04, 0.06], [1350, 0.08, 0.06], [1000, 0.12, 0.1]] }, // лёд разбился
+    warning: { wave: "sawtooth", notes: [[220, 0, 0.15], [220, 0.25, 0.15]] }                    // тревога
 };
 
 // Включить звуковую систему браузера (можно только после нажатия пользователя)
@@ -504,6 +566,20 @@ const musicTracks = {
         bassInst: { wave: "triangle", volume: 0.16, length: 0.9 },
         kick: "x---x---",
         hat: "--x---x-"
+    },
+
+    // Боевая музыка — играет, пока на экране акула. Быстрая и тревожная, ми минор
+    battle: {
+        bpm: 160,
+        chords: [["E3", "G3", "B3"], ["C3", "E3", "G3"], ["D3", "F#3", "A3"], ["B2", "D#3", "F#3"]],
+        bass: ["E2", "C2", "D2", "B1"],
+        bassPattern: "xxxxxxxx",
+        melody: `E5 - E5 G5 - E5 D5 - | C5 - C5 E5 - C5 B4 - | D5 - D5 F#5 - A5 F#5 - | B4 D#5 F#5 B5 A5 F#5 D#5 B4`,
+        lead: { wave: "sawtooth", volume: 0.06, length: 0.8, filter: 2500 },
+        pad: { wave: "sawtooth", volume: 0.02, length: 8, attack: 0.1, hold: 0.7, filter: 800, detunes: [-10, 10] },
+        bassInst: { wave: "sawtooth", volume: 0.12, length: 0.8, filter: 500 },
+        kick: "x---x-x-",
+        hat: "-x-x-x-x"
     }
 };
 
@@ -512,6 +588,7 @@ const music = {
     trackGain: null,  // регулятор текущей мелодии (для плавной смены)
     timer: null,      // таймер, который подкладывает ноты наперёд
     themeId: null,    // чья мелодия играет
+    override: null,   // особая мелодия поверх дизайна (например, "battle", пока на экране акула)
     step: 0,          // номер текущего шага
     nextTime: 0       // когда должен прозвучать следующий шаг
 };
@@ -590,7 +667,8 @@ function playKick(time, out) {
 }
 
 // Тарелочка — короткий «тсс»
-function playHat(time, out) {
+// Кусочек «белого шума» (создаётся один раз)
+function getNoiseBuffer() {
     if (!noiseBuffer) {
         noiseBuffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.2, audioCtx.sampleRate);
         const data = noiseBuffer.getChannelData(0);
@@ -598,6 +676,11 @@ function playHat(time, out) {
             data[i] = Math.random() * 2 - 1;
         }
     }
+    return noiseBuffer;
+}
+
+function playHat(time, out) {
+    getNoiseBuffer();
     const src = audioCtx.createBufferSource();
     const filter = audioCtx.createBiquadFilter();
     const g = audioCtx.createGain();
@@ -720,8 +803,9 @@ function updateMusic() {
         stopMusic();
         return;
     }
-    if (music.timer && music.themeId === activeTheme) return; // уже играет нужная
-    startTrack(activeTheme);
+    const wanted = music.override || activeTheme; // боевая музыка важнее мелодии дизайна
+    if (music.timer && music.themeId === wanted) return; // уже играет нужная
+    startTrack(wanted);
 }
 
 // Браузеры запрещают звук, пока человек ничего не нажал на странице,
@@ -797,6 +881,12 @@ function applyTheme(themeId) {
         fillDecor(screen.querySelector(".decor"), themeId);
     });
     updateMusic(); // у каждого дизайна своя мелодия
+
+    // у каждого дизайна своя особенность — перезапускаем
+    stopThemeEvents();
+    if (gameScreen.classList.contains("active")) {
+        scheduleThemeEvent();
+    }
 }
 
 // ===== Декорации заднего фона =====
@@ -844,7 +934,9 @@ const decorConfig = {
         { symbols: ["○", "◦", "°"], count: 30, anim: "rise",
           size: [8, 20], opacity: [0.3, 0.7], duration: [7, 15],
           colors: ["#e0f7ff", "#a5f3fc"] },
-        { symbols: ["🐟", "🐠", "🐡"], count: 7, anim: "swim",
+        { symbols: ["🐟", "🐠", "🐡"], count: 4, anim: "swim",       // плывут справа налево
+          size: [22, 40], opacity: [0.75, 0.95], duration: [14, 26], top: [15, 62] },
+        { symbols: ["🐟", "🐠", "🐡"], count: 4, anim: "swim-right", // плывут слева направо (развёрнуты)
           size: [22, 40], opacity: [0.75, 0.95], duration: [14, 26], top: [15, 62] },
         { symbols: ["🐢"], count: 1, anim: "swim",
           size: [36, 44], opacity: [0.85, 0.9], duration: [30, 40], top: [25, 45] },
@@ -1475,9 +1567,20 @@ function setLanguage(newLang) {
     renderThemes(); // после updateScreen — чтобы в превью были свежие тексты
 }
 
+// Человек сам сменил язык (кнопкой или в настройках)
+function userChangedLanguage(newLang) {
+    if (newLang === lang) return; // тот же язык — ничего не меняется
+    setLanguage(newLang);
+
+    // особенность «Хэллоуина»: смена языка будит что-то страшное
+    if (activeTheme === "halloween" && settings.features) {
+        showScreamer();
+    }
+}
+
 langButtons.forEach(function (btn) {
     btn.addEventListener("click", function () {
-        setLanguage(btn.dataset.lang);
+        userChangedLanguage(btn.dataset.lang);
     });
 });
 
@@ -1586,6 +1689,7 @@ function applySettings() {
     soundToggle.checked = settings.sound;
     vibrationToggle.checked = settings.vibration;
     animToggle.checked = settings.animations;
+    featuresToggle.checked = settings.features;
     confirmResetToggle.checked = settings.confirmReset;
     document.body.classList.toggle("no-anim", !settings.animations);
 }
@@ -1636,13 +1740,23 @@ animToggle.addEventListener("change", function () {
     applySettings();
 });
 
+featuresToggle.addEventListener("change", function () {
+    settings.features = featuresToggle.checked;
+    saveSettings();
+    // выключили — убираем то, что сейчас идёт; включили — события снова начнут появляться в игре
+    stopThemeEvents();
+    if (settings.features && gameScreen.classList.contains("active")) {
+        scheduleThemeEvent();
+    }
+});
+
 confirmResetToggle.addEventListener("change", function () {
     settings.confirmReset = confirmResetToggle.checked;
     saveSettings();
 });
 
 langSelect.addEventListener("change", function () {
-    setLanguage(langSelect.value);
+    userChangedLanguage(langSelect.value);
 });
 
 // ===== Очки =====
@@ -1686,6 +1800,13 @@ function showScreen(screen) {
     });
     screen.classList.add("active");
     window.scrollTo(0, 0);
+
+    // особенности дизайнов работают только на экране игры
+    if (screen === gameScreen) {
+        scheduleThemeEvent();
+    } else {
+        stopThemeEvents();
+    }
 }
 
 shopIcon.addEventListener("click", function () {
@@ -1980,6 +2101,8 @@ let lastClickTime = 0;
 let lastClickSource = null; // "mouse" или "key"
 
 function handleClick(source) {
+    if (frozen) return; // курсор во льду — клики не считаются, пока лёд не разбит
+
     const now = Date.now();
 
     // Другой способ нажатия почти в то же мгновение — считаем это одним кликом
@@ -1994,25 +2117,47 @@ function handleClick(source) {
     addPoints(clickPower);
 }
 
+let keyClick = false; // true, пока идёт «клик», сделанный кнопкой E
+
 // Левая кнопка мыши (mousedown — срабатывает в момент нажатия, а не отпускания)
 clickBtn.addEventListener("mousedown", function (e) {
     if (e.button !== 0) return; // только левая кнопка
-    handleClick("mouse");
+    handleClick(keyClick ? "key" : "mouse");
 });
 
-// Кнопка E на клавиатуре
+// Кнопка E работает как левая кнопка мыши: «кликает» туда, где сейчас курсор.
+// Так можно кликать по кнопке, акуле, золотой рыбке, машине, льду и меню.
 document.addEventListener("keydown", function (e) {
-    if (e.code !== "KeyE") return;                       // KeyE — работает и на русской раскладке (буква У)
-    if (e.repeat) return;                                // зажатая клавиша не кликает сама
-    if (!gameScreen.classList.contains("active")) return; // в меню E не работает
+    if (e.code !== "KeyE") return; // KeyE — работает и на русской раскладке (буква У)
+    if (e.repeat) return;          // зажатая клавиша не кликает сама
 
-    handleClick("key");
+    const target = document.elementFromPoint(mouseX, mouseY); // что сейчас под курсором
+    if (!target) return;
 
-    // Кнопка на экране «нажимается», чтобы было видно клик
-    clickBtn.classList.add("pressed");
-    setTimeout(function () {
-        clickBtn.classList.remove("pressed");
-    }, 100);
+    const opts = {
+        bubbles: true,
+        cancelable: true,
+        view: window,
+        clientX: mouseX,
+        clientY: mouseY,
+        button: 0
+    };
+
+    // изображаем настоящий клик мышкой: нажали → отпустили → клик
+    keyClick = true;
+    target.dispatchEvent(new PointerEvent("pointerdown", Object.assign({ pointerType: "mouse", isPrimary: true, buttons: 1 }, opts)));
+    target.dispatchEvent(new MouseEvent("mousedown", Object.assign({ buttons: 1 }, opts)));
+    target.dispatchEvent(new MouseEvent("mouseup", opts));
+    target.dispatchEvent(new MouseEvent("click", opts));
+    keyClick = false;
+
+    // если «кликнули» по кнопке очков — она «нажимается», чтобы было видно клик
+    if (clickBtn.contains(target)) {
+        clickBtn.classList.add("pressed");
+        setTimeout(function () {
+            clickBtn.classList.remove("pressed");
+        }, 100);
+    }
 });
 
 // Сброс — всё возвращаем в начальное состояние (язык и настройки остаются)
@@ -2042,6 +2187,618 @@ resetBtn.addEventListener("click", function () {
     updateScreen();
     saveGame(); // сохраняем «чистое» состояние
 });
+
+// =====================================================
+// ===== Особенности дизайнов =====
+// Неон — пролетающая машина, Вечная зима — замерзающий курсор,
+// Глубина — акула-охотница, Хэллоуин — скример при смене языка.
+// =====================================================
+
+// Слой поверх всего, в котором появляются машина, лёд, акула и надписи
+const fxLayer = document.createElement("div");
+fxLayer.className = "fx-layer";
+document.body.append(fxLayer);
+
+// Где сейчас курсор (за ним охотится акула и к нему прилипает лёд)
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
+
+document.addEventListener("pointermove", function (e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+document.addEventListener("pointerdown", function (e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+}, true);
+
+let frozen = false;        // курсор во льду
+let eventTimer = null;     // таймер до следующего события
+let eventActive = false;   // событие идёт прямо сейчас
+let eventCleanup = null;   // как убрать текущее событие, если надо прервать
+
+// Какой дизайн что делает и как часто: delay — пауза до события [от, до] в секундах
+const themeEvents = {
+    neon: { delay: [15, 30], start: startNeonCar },
+    winter: { delay: [40, 80], start: startFreeze },
+    ocean: { delay: [40, 75], start: startShark }
+};
+
+// ВРЕМЕННО, для тестов: пробел сразу запускает особенность текущего дизайна
+// (в Хэллоуине — скример). Чтобы выключить — поставь false.
+const SPACE_TRIGGERS_EVENT = true;
+
+document.addEventListener("keydown", function (e) {
+    if (!SPACE_TRIGGERS_EVENT || e.code !== "Space" || e.repeat) return;
+    if (!gameScreen.classList.contains("active")) return;
+    e.preventDefault(); // чтобы пробел не листал страницу и не нажимал кнопки
+
+    if (!settings.features) return; // особенности выключены в настройках
+
+    if (activeTheme === "halloween") {
+        showScreamer();
+        return;
+    }
+
+    const ev = themeEvents[activeTheme];
+    if (!ev || eventActive) return; // у дизайна нет особенности или она уже идёт
+    clearTimeout(eventTimer);
+    eventActive = true;
+    ev.start();
+});
+
+// Случайное целое от 0 до n-1
+function randomIndex(n) {
+    return Math.floor(Math.random() * n);
+}
+
+// Всплывающая надпись в точке (x, y)
+function showFloat(text, x, y, color, big) {
+    const el = document.createElement("div");
+    el.className = "float-text" + (big ? " big" : "");
+    el.textContent = text;
+    el.style.color = color;
+    // не даём надписи уехать за край экрана
+    el.style.left = Math.min(Math.max(x, 160), window.innerWidth - 160) + "px";
+    el.style.top = Math.max(y, 60) + "px";
+    fxLayer.append(el);
+    setTimeout(function () {
+        el.remove();
+    }, 2000);
+}
+
+// Запланировать следующее событие текущего дизайна
+function scheduleThemeEvent() {
+    clearTimeout(eventTimer);
+    const ev = themeEvents[activeTheme];
+    if (!settings.features) return;  // особенности выключены в настройках
+    if (!ev || eventActive) return;  // у «Классики» и других без особенностей — ничего
+
+    const delay = ev.delay[0] + Math.random() * (ev.delay[1] - ev.delay[0]);
+    eventTimer = setTimeout(function () {
+        // не на экране игры или вкладка свёрнута — попробуем позже
+        if (!gameScreen.classList.contains("active") || document.hidden || themeEvents[activeTheme] !== ev) {
+            scheduleThemeEvent();
+            return;
+        }
+        eventActive = true;
+        ev.start();
+    }, delay * 1000);
+}
+
+// Событие закончилось само — планируем следующее
+function finishThemeEvent() {
+    eventActive = false;
+    eventCleanup = null;
+    scheduleThemeEvent();
+}
+
+// Прервать всё (ушли в меню, сменили дизайн)
+function stopThemeEvents() {
+    clearTimeout(eventTimer);
+    if (eventCleanup) {
+        eventCleanup();
+    }
+    eventCleanup = null;
+    eventActive = false;
+}
+
+// ----- НЕОН: машина проносится через экран -----
+const NEON_BONUS_CHANCE = 0.3; // шанс получить +100 (иначе — крутая фраза)
+
+function startNeonCar() {
+    const car = document.createElement("div");
+    const toRight = Math.random() < 0.5;
+    car.className = "neon-car " + (toRight ? "to-right" : "to-left");
+    car.innerHTML = '<span class="car-body">' + (Math.random() < 0.5 ? "🚗" : "🏎️") + "</span>";
+    car.style.top = (18 + Math.random() * 55) + "%";
+    car.style.animationDuration = (1.8 + Math.random() * 1.2) + "s"; // быстро!
+    fxLayer.append(car);
+
+    let caught = false;
+
+    function end() {
+        car.remove();
+    }
+
+    car.addEventListener("pointerdown", function (e) {
+        e.stopPropagation();
+        if (caught) return;
+        caught = true;
+
+        if (Math.random() < NEON_BONUS_CHANCE) {
+            addPoints(100);
+            showFloat("+100", e.clientX, e.clientY, "#39ff14", true);
+            playSound("bonus");
+            vibrate([30, 30, 30]);
+        } else {
+            const phrases = texts[lang].neonPhrases;
+            showFloat(phrases[randomIndex(phrases.length)], e.clientX, e.clientY, "#ff00c8", true);
+            playSound("click");
+        }
+
+        car.classList.add("caught"); // машина исчезает
+        setTimeout(function () {
+            end();
+            finishThemeEvent();
+        }, 300);
+    });
+
+    // уехала, никто не поймал
+    car.addEventListener("animationend", function () {
+        if (caught) return;
+        end();
+        finishThemeEvent();
+    });
+
+    eventCleanup = end;
+}
+
+// ----- ВЕЧНАЯ ЗИМА: курсор вмерзает в лёд -----
+const ICE_HITS = 8; // сколько кликов нужно, чтобы разбить лёд
+
+function startFreeze() {
+    const overlay = document.createElement("div");
+    overlay.className = "freeze-overlay";
+
+    const ice = document.createElement("div");
+    ice.className = "ice-cursor";
+    // курсор внутри льда и трещины (c1..c4 появляются по очереди)
+    ice.innerHTML =
+        '<svg class="ice-arrow" viewBox="0 0 24 24"><path d="M4 2 L4 20 L9 15 L12 22 L15 21 L12 14 L19 14 Z" fill="#fff" stroke="#1e3a6e" stroke-width="1.5"/></svg>' +
+        '<svg class="cracks" viewBox="0 0 80 80" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round">' +
+        '<path class="crack c1" d="M40 40 L20 12 M40 40 L66 22"/>' +
+        '<path class="crack c2" d="M40 40 L10 46 M30 26 L22 30 M40 40 L58 70"/>' +
+        '<path class="crack c3" d="M40 40 L36 76 M52 30 L60 8 M24 44 L14 62"/>' +
+        '<path class="crack c4" d="M58 70 L72 62 M20 12 L8 20 M66 22 L76 40 M36 76 L48 78"/>' +
+        "</svg>";
+
+    overlay.append(ice);
+    fxLayer.append(overlay);
+
+    frozen = true;
+    showFloat(t("frozen"), window.innerWidth / 2, window.innerHeight * 0.22, "#bae6fd", true);
+
+    let hits = 0;
+
+    // лёд всегда там, где курсор
+    function place() {
+        ice.style.left = mouseX + "px";
+        ice.style.top = mouseY + "px";
+    }
+    place();
+    document.addEventListener("pointermove", place);
+
+    function end() {
+        frozen = false;
+        document.removeEventListener("pointermove", place);
+        overlay.remove();
+    }
+
+    overlay.addEventListener("pointerdown", function (e) {
+        e.preventDefault();
+        hits++;
+        place();
+
+        // стадия трещин: 1–4, лёд становится всё более разбитым
+        const stage = Math.ceil(hits / ICE_HITS * 4);
+        ice.className = "ice-cursor stage-" + stage;
+        void ice.offsetWidth; // перезапуск анимации удара
+        ice.classList.add("hit");
+        playSound("crack");
+        vibrate(20);
+
+        if (hits >= ICE_HITS) {
+            shatterIce(mouseX, mouseY);
+            playSound("shatter");
+            end();
+            showFloat(t("unfrozen"), mouseX, mouseY - 50, "#e0f2fe", true);
+            finishThemeEvent();
+        }
+    });
+
+    eventCleanup = end;
+}
+
+// Осколки льда разлетаются в стороны
+function shatterIce(x, y) {
+    for (let i = 0; i < 10; i++) {
+        const shard = document.createElement("div");
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 60 + Math.random() * 80;
+        shard.className = "ice-shard";
+        shard.style.left = x + "px";
+        shard.style.top = y + "px";
+        shard.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+        shard.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+        fxLayer.append(shard);
+        setTimeout(function () {
+            shard.remove();
+        }, 700);
+    }
+}
+
+// ----- ГЛУБИНА: акула охотится за курсором -----
+const SHARK_SPEED = 420;      // скорость охоты, пикселей в секунду
+const SHARK_FLEE_SPEED = 170; // скорость, с которой акула удирает, пока ты под защитой
+const SHARK_BITE = 100;       // сколько очков отнимает укус
+const SHARK_HITS = 10;        // сколько попаданий под защитой нужно, чтобы прогнать акулу
+const SHIELD_TIME = 9000;     // сколько длится защита (битва с акулой), мс
+const SHARK_MAX_TIME = 45000; // через сколько акула сама уплывёт, мс
+
+function startShark() {
+    const shark = document.createElement("div");
+    shark.className = "shark";
+    shark.innerHTML = '<span class="shark-body">🦈</span>';
+    fxLayer.append(shark);
+
+    // золотое свечение вокруг курсора + счётчик попаданий
+    const glow = document.createElement("div");
+    glow.className = "shield-glow";
+    const glowCount = document.createElement("div");
+    glowCount.className = "shield-count";
+    glow.append(glowCount);
+    fxLayer.append(glow);
+
+    // появляется откуда угодно: сверху, снизу, слева, справа или из угла
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    const side = randomIndex(4);
+    let x, y;
+    if (side === 0) {          // сверху
+        x = -80 + Math.random() * (W + 160);
+        y = -80;
+    } else if (side === 1) {   // снизу
+        x = -80 + Math.random() * (W + 160);
+        y = H + 80;
+    } else if (side === 2) {   // слева
+        x = -80;
+        y = -80 + Math.random() * (H + 160);
+    } else {                   // справа
+        x = W + 80;
+        y = -80 + Math.random() * (H + 160);
+    }
+    let vx = 0;                // скорость отскока после удара (плавно затухает)
+    let vy = 0;
+    let facingRight = false;   // куда смотрит акула
+    let heading = Math.random() * Math.PI * 2; // направление, куда акула удирает (в радианах)
+    let hitsInShield = 0;      // сколько раз попал по акуле за текущую защиту
+    let wasShielded = false;   // была ли защита в прошлом кадре (чтобы заметить, что она кончилась)
+    let leaving = false;
+    let shieldUntil = 0;
+    let goldFish = null;
+    let goldRespawnAt = 0;
+    let raf = null;
+    let last = performance.now();
+    const startTime = last;
+
+    showFloat(t("sharkAppears"), window.innerWidth / 2, window.innerHeight * 0.2, "#ff6b6b", true);
+    playSound("warning");
+
+    // включаем боевую музыку
+    music.override = "battle";
+    updateMusic();
+
+    // Золотая рыбка — если её съесть (кликнуть), даёт защиту
+    function spawnGoldFish() {
+        goldFish = document.createElement("div");
+        goldFish.className = "gold-fish";
+        goldFish.textContent = "🐠";
+        goldFish.style.left = (15 + Math.random() * 70) + "%";
+        goldFish.style.top = (20 + Math.random() * 60) + "%";
+        goldFish.addEventListener("pointerdown", function (e) {
+            e.stopPropagation();
+            shieldUntil = performance.now() + SHIELD_TIME;
+            hitsInShield = 0;
+            glowCount.textContent = hitsInShield + "/" + SHARK_HITS;
+            goldFish.remove();
+            goldFish = null;
+            playSound("bonus");
+            showFloat(t("shieldOn"), e.clientX, e.clientY - 40, "#a5f3fc", true);
+        });
+        fxLayer.append(goldFish);
+    }
+
+    function shielded() {
+        return performance.now() < shieldUntil;
+    }
+
+    // уплыть за край экрана
+    function leave() {
+        leaving = true;
+        if (goldFish) {
+            goldFish.remove();
+            goldFish = null;
+        }
+    }
+
+    // Куда удирать: пробуем 16 направлений и берём то, что уводит дальше всего от курсора
+    // и не упирается в край экрана. Так акулу не зажать у стены — она проскальзывает вдоль неё.
+    function fleeDirection() {
+        const margin = 70;
+        let best = heading;
+        let bestScore = -Infinity;
+        for (let i = 0; i < 16; i++) {
+            const a = i / 16 * Math.PI * 2;
+            const cx = x + Math.cos(a) * 90; // где окажется акула, если плыть в эту сторону
+            const cy = y + Math.sin(a) * 90;
+            if (cx < margin || cx > window.innerWidth - margin || cy < margin || cy > window.innerHeight - margin) {
+                continue; // туда стена — не годится
+            }
+            // чем дальше от курсора, тем лучше; чуть-чуть предпочитаем текущее направление, чтобы не дёргалась
+            const score = Math.hypot(cx - mouseX, cy - mouseY) + 25 * Math.cos(a - heading);
+            if (score > bestScore) {
+                bestScore = score;
+                best = a;
+            }
+        }
+        return best;
+    }
+
+    // толкнуть акулу от курсора: она не телепортируется, а плавно отлетает
+    function push(power) {
+        const dx = x - mouseX;
+        const dy = y - mouseY;
+        const d = Math.hypot(dx, dy) || 1;
+        vx += dx / d * power;
+        vy += dy / d * power;
+    }
+
+    // Клик по акуле: под защитой — бьём, без защиты — подсказка
+    shark.addEventListener("pointerdown", function (e) {
+        e.stopPropagation();
+        if (leaving) return;
+
+        if (shielded()) {
+            hitsInShield++;
+            glowCount.textContent = hitsInShield + "/" + SHARK_HITS;
+            push(450);
+            shark.classList.add("hit");
+            setTimeout(function () {
+                shark.classList.remove("hit");
+            }, 150);
+            playSound("hit");
+            vibrate(30);
+            if (hitsInShield >= SHARK_HITS) {
+                shieldUntil = 0; // свечение гаснет — победа
+                showFloat(t("sharkGone"), e.clientX, e.clientY - 40, "#a5f3fc", true);
+                leave();
+            }
+        } else {
+            showFloat(t("needShield"), e.clientX, e.clientY - 40, "#ffe066");
+        }
+    });
+
+    function end() {
+        cancelAnimationFrame(raf);
+        shark.remove();
+        glow.remove();
+        if (goldFish) {
+            goldFish.remove();
+        }
+
+        // акулы нет — возвращаем обычную мелодию дизайна
+        music.override = null;
+        updateMusic();
+    }
+
+    // Каждый кадр: акула плывёт к курсору
+    function frame(now) {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+
+        const prevX = x;
+        const isShielded = shielded();
+
+        // защита только что кончилась, а 10 попаданий не набралось
+        if (wasShielded && !isShielded && !leaving) {
+            hitsInShield = 0;
+            showFloat(t("shieldOver"), mouseX, mouseY - 50, "#ffe066", true);
+        }
+        wasShielded = isShielded;
+
+        // Куда плыть: уплывает к краю / удирает от курсора (под защитой) / охотится за курсором
+        let dx, dy, speed;
+        if (leaving) {
+            // уплывает от центра экрана — к ближайшему краю, в любую сторону
+            dx = x - window.innerWidth / 2;
+            dy = y - window.innerHeight / 2;
+            if (Math.abs(dx) < 1 && Math.abs(dy) < 1) dx = 1;
+            speed = 600;
+        } else if (isShielded) {
+            heading = fleeDirection();
+            dx = Math.cos(heading);
+            dy = Math.sin(heading);
+            speed = SHARK_FLEE_SPEED;
+        } else {
+            dx = mouseX - x;
+            dy = mouseY - y;
+            speed = SHARK_SPEED;
+        }
+
+        const len = Math.hypot(dx, dy);
+        if (len > 1) {
+            const step = leaving || isShielded ? speed * dt : Math.min(speed * dt, len);
+            x += dx / len * step;
+            y += dy / len * step;
+        }
+
+        // отскок после удара плавно затухает
+        x += vx * dt;
+        y += vy * dt;
+        const fade = Math.exp(-6 * dt);
+        vx *= fade;
+        vy *= fade;
+
+        // удирая, акула не выплывает за экран — её можно догнать
+        if (isShielded && !leaving) {
+            x = Math.min(Math.max(x, 50), window.innerWidth - 50);
+            y = Math.min(Math.max(y, 50), window.innerHeight - 50);
+        }
+
+        shark.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+
+        // разворачивается, только если заметно сдвинулась вбок — иначе мельтешит туда-сюда
+        const movedX = x - prevX;
+        if (movedX > 0.6) facingRight = true;
+        if (movedX < -0.6) facingRight = false;
+        shark.classList.toggle("face-right", facingRight);
+
+        // золотое свечение вокруг курсора
+        glow.classList.toggle("on", isShielded);
+        glow.classList.toggle("ending", isShielded && shieldUntil - now < 2000);
+        glow.style.left = mouseX + "px";
+        glow.style.top = mouseY + "px";
+
+        if (!leaving) {
+            // поймала курсор (без защиты)
+            const distToMouse = Math.hypot(mouseX - x, mouseY - y);
+            if (!isShielded && distToMouse < 35) {
+                count = Math.max(0, count - SHARK_BITE);
+                updateScreen();
+                saveGame();
+                showFloat(t("sharkBite"), mouseX, mouseY - 40, "#ff4d4d", true);
+                playSound("bite");
+                vibrate(250);
+                leave();
+            }
+
+            // защита кончилась, а акула ещё тут — через 3 секунды новая золотая рыбка
+            if (!isShielded && !goldFish) {
+                if (!goldRespawnAt) {
+                    goldRespawnAt = now + 3000;
+                } else if (now > goldRespawnAt) {
+                    goldRespawnAt = 0;
+                    spawnGoldFish();
+                }
+            }
+
+            if (now - startTime > SHARK_MAX_TIME) {
+                leave();
+            }
+        } else if (x < -150 || x > window.innerWidth + 150 || y < -150 || y > window.innerHeight + 150) {
+            // уплыла — событие закончено
+            end();
+            finishThemeEvent();
+            return;
+        }
+
+        raf = requestAnimationFrame(frame);
+    }
+
+    spawnGoldFish();
+    raf = requestAnimationFrame(frame);
+    eventCleanup = end;
+}
+
+// ----- ХЭЛЛОУИН: скример -----
+function showScreamer() {
+    const screamer = document.createElement("div");
+    screamer.className = "screamer";
+    // жуткое лицо: бледное, пустые глаза с красными точками, раскрытый рот с зубами, кровавые потёки
+    screamer.innerHTML =
+        '<svg viewBox="0 0 200 240">' +
+        '<ellipse cx="100" cy="115" rx="80" ry="105" fill="#d8d2c4"/>' +
+        '<ellipse cx="68" cy="95" rx="22" ry="28" fill="#000"/>' +
+        '<ellipse cx="132" cy="95" rx="22" ry="28" fill="#000"/>' +
+        '<circle cx="70" cy="100" r="6" fill="#ff1a1a"/>' +
+        '<circle cx="130" cy="100" r="6" fill="#ff1a1a"/>' +
+        '<path d="M60 120 q-3 22 2 44 M140 120 q3 18 -1 36" stroke="#8b0000" stroke-width="4" fill="none" stroke-linecap="round"/>' +
+        '<path d="M100 120 l-8 18 h16 z" fill="#2a1a1a"/>' +
+        '<ellipse cx="100" cy="182" rx="40" ry="36" fill="#000"/>' +
+        '<path d="M64 165 l8 13 l8 -13 l8 13 l8 -13 l8 13 l8 -13 l8 13 l8 -13 z" fill="#e8e2d0"/>' +
+        '<path d="M66 202 l8 -12 l8 12 l8 -12 l8 12 l8 -12 l8 12 l8 -12 l8 12 z" fill="#e8e2d0"/>' +
+        "</svg>";
+    fxLayer.append(screamer);
+
+    playScream();
+    vibrate([300, 100, 300]);
+
+    setTimeout(function () {
+        screamer.remove();
+    }, 1200);
+}
+
+// Крик: шум + два «воющих» звука, сползающих вниз
+function playScream() {
+    if (!settings.sound || settings.volume === 0) return;
+    if (!ensureAudio()) return;
+
+    const now = audioCtx.currentTime;
+    const volume = (settings.volume / 100) * 1.6; // в несколько раз громче обычных звуков
+
+    // компрессор «сжимает» звук: он становится плотнее и громче, но не хрипит
+    const compressor = audioCtx.createDynamicsCompressor();
+    compressor.threshold.value = -24;
+    compressor.knee.value = 10;
+    compressor.ratio.value = 8;
+    compressor.attack.value = 0.003;
+    compressor.release.value = 0.2;
+    compressor.connect(audioCtx.destination);
+
+    const master = audioCtx.createGain();
+    master.gain.setValueAtTime(volume, now);
+    master.gain.setValueAtTime(volume, now + 0.6);                 // держим крик на полной громкости
+    master.gain.exponentialRampToValueAtTime(0.0001, now + 1.15);
+    master.connect(compressor);
+
+    // шипящий шум
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = getNoiseBuffer();
+    noise.loop = true;
+    const band = audioCtx.createBiquadFilter();
+    band.type = "bandpass";
+    band.frequency.value = 1400;
+    const noiseGain = audioCtx.createGain();
+    noiseGain.gain.value = 0.9;
+    noise.connect(band);
+    band.connect(noiseGain);
+    noiseGain.connect(master);
+    noise.start(now);
+    noise.stop(now + 1.1);
+
+    // два воя с дрожанием
+    [900, 1250].forEach(function (startFreq) {
+        const osc = audioCtx.createOscillator();
+        const lfo = audioCtx.createOscillator();
+        const lfoGain = audioCtx.createGain();
+        const g = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(startFreq, now);
+        osc.frequency.exponentialRampToValueAtTime(startFreq / 3.5, now + 1.1);
+        lfo.frequency.value = 28;
+        lfoGain.gain.value = 40;
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc.frequency);
+        g.gain.value = 0.6;
+        osc.connect(g);
+        g.connect(master);
+        osc.start(now);
+        lfo.start(now);
+        osc.stop(now + 1.15);
+        lfo.stop(now + 1.15);
+    });
+}
 
 // ===== Запуск =====
 loadSettings();              // настройки

@@ -26,11 +26,11 @@
             <button data-lang="de">DE</button>
         </div>
 
-        <!-- Иконки: настройки, магазин дизайнов, магазин улучшений -->
+        <!-- Круглые кнопки меню в правом верхнем углу: магазин, дизайны, настройки -->
         <div class="top-icons">
-            <button id="settingsIcon" class="round-icon">⚙️</button>
-            <button id="themesIcon" class="round-icon">🎨</button>
             <button id="shopIcon" class="round-icon">🛒</button>
+            <button id="themesIcon" class="round-icon">🎨</button>
+            <button id="settingsIcon" class="round-icon">⚙️</button>
         </div>
 
         <div id="score" class="score">0</div>
@@ -148,6 +148,18 @@
                 <span data-i18n="animations"></span>
                 <label class="switch">
                     <input type="checkbox" id="animToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <!-- Особенности дизайнов (машина, лёд, акула, скример) -->
+            <div class="setting-row">
+                <span>
+                    <span data-i18n="features"></span>
+                    <small class="setting-hint" data-i18n="featuresHint"></small>
+                </span>
+                <label class="switch">
+                    <input type="checkbox" id="featuresToggle">
                     <span class="slider"></span>
                 </label>
             </div>
