@@ -7,23 +7,32 @@
     <link rel="stylesheet" href="clicker.css">
 </head>
 <body>
+    <!-- Тексты с атрибутом data-i18n JS подставляет из словаря на выбранном языке -->
+
     <!-- ===== Экран игры ===== -->
     <div id="gameScreen" class="screen active">
+        <!-- Переключатель языка -->
+        <div id="langSwitch">
+            <button data-lang="ru">RU</button>
+            <button data-lang="en">EN</button>
+            <button data-lang="de">DE</button>
+        </div>
+
         <!-- Иконка магазина -->
-        <button id="shopIcon" title="Магазин">🛒</button>
+        <button id="shopIcon">🛒</button>
 
         <div id="score">0</div>
-        <div id="power">+1 за клик</div>
-        <button id="clickBtn">Жми сюда</button>
+        <div id="power"></div>
+        <button id="clickBtn" data-i18n="click"></button>
         <div id="message"></div>
-        <button id="resetBtn">Сброс</button>
+        <button id="resetBtn" data-i18n="reset"></button>
     </div>
 
     <!-- ===== Экран магазина ===== -->
     <div id="shopScreen" class="screen">
         <div id="shopHeader">
-            <button id="backBtn">← Назад</button>
-            <h2>Магазин</h2>
+            <button id="backBtn" data-i18n="back"></button>
+            <h2 data-i18n="shop"></h2>
             <div id="balance">0</div>
         </div>
 
@@ -34,7 +43,7 @@
         <div id="itemInfo">
             <h3 id="infoName"></h3>
             <p id="infoDesc"></p>
-            <button id="confirmBtn">Подтвердить</button>
+            <button id="confirmBtn" data-i18n="confirm"></button>
             <div id="shopError"></div>
         </div>
     </div>

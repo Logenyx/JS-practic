@@ -48,7 +48,8 @@ button {
 }
 
 #clickBtn { background: #4caf50; color: white; }
-#clickBtn:active { transform: scale(0.95); }
+#clickBtn:active,
+#clickBtn.pressed { transform: scale(0.95); }
 
 #resetBtn {
     background: #e53935;
@@ -62,6 +63,28 @@ button {
     color: #e91e63;
     font-weight: bold;
     min-height: 45px;
+}
+
+/* Переключатель языка в левом верхнем углу */
+#langSwitch {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 6px;
+}
+
+#langSwitch button {
+    font-size: 16px;
+    padding: 8px 12px;
+    background: #ddd;
+    color: #333;
+    font-weight: bold;
+}
+
+#langSwitch button.active {
+    background: #333;
+    color: white;
 }
 
 /* Иконка магазина в правом верхнем углу */
@@ -194,7 +217,7 @@ button {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(-15deg);
-    font-size: 26px;
+    font-size: 22px; /* чтобы длинное немецкое «VERKAUFT» влезало в карточку */
     font-weight: bold;
     color: black;
 }

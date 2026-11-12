@@ -23,17 +23,86 @@ let clickPower = 1;      // сколько очков даёт один клик
 let autoPerSecond = 0;   // сколько очков в секунду даёт автокликер
 let autoTimer = null;    // таймер автокликера
 let selectedItem = null; // какой товар сейчас выбран в магазине
+let won = false;         // набрано ли уже 10 очков (показываем «Ура»)
+let lang = "ru";         // текущий язык
+
+// ===== Словарь: все тексты игры на трёх языках =====
+// {n} в тексте заменяется на число
+const texts = {
+    ru: {
+        title: "Кликер",
+        click: "Жми сюда",
+        reset: "Сброс",
+        perClick: "+{n} за клик",
+        perSecond: "+{n} в секунду",
+        win: "Ура, поздравляю!!!",
+        shop: "Магазин",
+        back: "← Назад",
+        confirm: "Подтвердить",
+        sold: "ПРОДАНО",
+        price: "{n} кликов",
+        notEnough: "Не хватает кликов! Нужно ещё {n}",
+        items: {
+            x2: { name: "Клик ×2", description: "Каждый клик будет давать 2 очка вместо 1." },
+            auto: { name: "Автокликер", description: "Каждую секунду сам добавляет 1 очко." }
+        }
+    },
+    en: {
+        title: "Clicker",
+        click: "Click here",
+        reset: "Reset",
+        perClick: "+{n} per click",
+        perSecond: "+{n} per second",
+        win: "Hooray, congratulations!!!",
+        shop: "Shop",
+        back: "← Back",
+        confirm: "Confirm",
+        sold: "SOLD",
+        price: "{n} clicks",
+        notEnough: "Not enough clicks! You need {n} more",
+        items: {
+            x2: { name: "Click ×2", description: "Every click gives 2 points instead of 1." },
+            auto: { name: "Auto-clicker", description: "Adds 1 point every second by itself." }
+        }
+    },
+    de: {
+        title: "Klicker",
+        click: "Hier klicken",
+        reset: "Zurücksetzen",
+        perClick: "+{n} pro Klick",
+        perSecond: "+{n} pro Sekunde",
+        win: "Hurra, herzlichen Glückwunsch!!!",
+        shop: "Shop",
+        back: "← Zurück",
+        confirm: "Bestätigen",
+        sold: "VERKAUFT",
+        price: "{n} Klicks",
+        notEnough: "Nicht genug Klicks! Es fehlen noch {n}",
+        items: {
+            x2: { name: "Klick ×2", description: "Jeder Klick bringt 2 Punkte statt 1." },
+            auto: { name: "Autoklicker", description: "Fügt jede Sekunde von selbst 1 Punkt hinzu." }
+        }
+    }
+};
+
+// Взять текст на текущем языке и подставить число вместо {n}
+function t(key, n) {
+    return texts[lang][key].replace("{n}", n);
+}
+
+// Название и описание товара на текущем языке
+function itemText(item) {
+    return texts[lang].items[item.id];
+}
 
 // ===== Товары магазина =====
-// Чтобы добавить товар — просто допиши ещё один объект в этот список
-// id — короткое имя товара, по нему он запоминается в сохранении
+// id — короткое имя товара: по нему товар запоминается в сохранении
+// и по нему берутся его название и описание из словаря
 const shopItems = [
     {
         id: "x2",
-        name: "Клик ×2",
         icon: "👆",
         price: 20,
-        description: "Каждый клик будет давать 2 очка вместо 1.",
         bought: false,
         buy: function () {
             clickPower = 2;
@@ -41,10 +110,8 @@ const shopItems = [
     },
     {
         id: "auto",
-        name: "Автокликер",
         icon: "🤖",
         price: 50,
-        description: "Каждую секунду сам добавляет 1 очко.",
         bought: false,
         buy: function () {
             autoPerSecond = 1;
@@ -55,6 +122,49 @@ const shopItems = [
     }
 ];
 
+// ===== Язык =====
+
+const LANG_KEY = "clickerLang";
+
+// Переключить язык и перерисовать все тексты
+function setLanguage(newLang) {
+    lang = newLang;
+
+    try {
+        localStorage.setItem(LANG_KEY, lang); // язык помним отдельно, «Сброс» его не трогает
+    } catch (e) {}
+
+    document.documentElement.lang = lang;
+    document.title = t("title");
+    shopIcon.title = t("shop");
+
+    // Все элементы с data-i18n="ключ" получают текст из словаря
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+        el.textContent = t(el.dataset.i18n);
+    });
+
+    // Подсвечиваем выбранный язык
+    document.querySelectorAll("#langSwitch button").forEach(function (btn) {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+    });
+
+    // Если в магазине открыта плашка — переводим и её
+    if (selectedItem) {
+        infoName.textContent = itemText(selectedItem).name;
+        infoDesc.textContent = itemText(selectedItem).description;
+        shopError.textContent = "";
+    }
+
+    renderShop();
+    updateScreen();
+}
+
+document.querySelectorAll("#langSwitch button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+        setLanguage(btn.dataset.lang);
+    });
+});
+
 // ===== Сохранение прогресса =====
 // localStorage — хранилище браузера, оно не очищается при обновлении страницы
 
@@ -63,7 +173,7 @@ const SAVE_KEY = "clickerSave";
 function saveGame() {
     const data = {
         count: count,
-        won: messageEl.textContent !== "", // показана ли уже надпись «Ура»
+        won: won,
         bought: shopItems
             .filter(function (item) { return item.bought; })
             .map(function (item) { return item.id; })   // например ["x2", "auto"]
@@ -86,10 +196,7 @@ function loadGame() {
     if (!data) return; // сохранения нет — начинаем с нуля
 
     count = data.count || 0;
-
-    if (data.won) {
-        messageEl.textContent = "Ура, поздравляю!!!";
-    }
+    won = data.won || false;
 
     // Заново «покупаем» купленные товары, чтобы вернулись их бонусы
     shopItems.forEach(function (item) {
@@ -100,31 +207,43 @@ function loadGame() {
     });
 }
 
+function loadLanguage() {
+    let saved = null;
+    try {
+        saved = localStorage.getItem(LANG_KEY);
+    } catch (e) {}
+
+    // Если сохранённого языка нет или он неизвестный — русский
+    return texts[saved] ? saved : "ru";
+}
+
 // ===== Очки =====
 
 // Добавить очки и обновить экран
 function addPoints(amount) {
     count += amount;
-    updateScreen();
 
     // >= а не ===, потому что счёт может перескочить через 10
     if (count >= 10) {
-        messageEl.textContent = "Ура, поздравляю!!!";
+        won = true;
     }
 
+    updateScreen();
     saveGame();
 }
 
-// Обновляем табло, баланс в магазине и строку с бонусами
+// Обновляем табло, баланс в магазине, строку с бонусами и надпись «Ура»
 function updateScreen() {
     scoreEl.textContent = count;
     balanceEl.textContent = count;
 
-    let text = "+" + clickPower + " за клик";
+    let text = t("perClick", clickPower);
     if (autoPerSecond > 0) {
-        text += ", +" + autoPerSecond + " в секунду";
+        text += ", " + t("perSecond", autoPerSecond);
     }
     powerEl.textContent = text;
+
+    messageEl.textContent = won ? t("win") : "";
 }
 
 // ===== Переключение экранов =====
@@ -162,15 +281,15 @@ function renderShop() {
 
         const name = document.createElement("div");
         name.className = "card-name";
-        name.textContent = item.name;
+        name.textContent = itemText(item).name;
 
         const price = document.createElement("div");
         price.className = "card-price";
-        price.textContent = item.price + " кликов";
+        price.textContent = t("price", item.price);
 
         const soldLabel = document.createElement("div");
         soldLabel.className = "sold-label";
-        soldLabel.textContent = "ПРОДАНО";
+        soldLabel.textContent = t("sold");
 
         card.append(icon, name, price, soldLabel);
 
@@ -192,8 +311,8 @@ function renderShop() {
 // Выбрать товар: подсветить карточку и показать плашку
 function openInfo(item) {
     selectedItem = item;
-    infoName.textContent = item.name;
-    infoDesc.textContent = item.description;
+    infoName.textContent = itemText(item).name;
+    infoDesc.textContent = itemText(item).description;
     shopError.textContent = "";
     itemInfo.classList.add("show");
     renderShop();
@@ -213,7 +332,7 @@ confirmBtn.addEventListener("click", function () {
     if (!item) return;
 
     if (count < item.price) {
-        shopError.textContent = "Не хватает кликов! Нужно ещё " + (item.price - count);
+        shopError.textContent = t("notEnough", item.price - count);
         return;
     }
 
@@ -228,19 +347,54 @@ confirmBtn.addEventListener("click", function () {
 
 // ===== Кнопки экрана игры =====
 
-clickBtn.addEventListener("click", function () {
+// Клик можно сделать мышкой или кнопкой E.
+// Если мышка и E нажаты одновременно (разница меньше SIMULTANEOUS_MS), засчитывается только 1 клик.
+const SIMULTANEOUS_MS = 150;
+let lastClickTime = 0;
+let lastClickSource = null; // "mouse" или "key"
+
+function handleClick(source) {
+    const now = Date.now();
+
+    // Другой способ нажатия почти в то же мгновение — считаем это одним кликом
+    if (source !== lastClickSource && now - lastClickTime < SIMULTANEOUS_MS) {
+        return;
+    }
+
+    lastClickTime = now;
+    lastClickSource = source;
     addPoints(clickPower);
+}
+
+// Левая кнопка мыши (mousedown — срабатывает в момент нажатия, а не отпускания)
+clickBtn.addEventListener("mousedown", function (e) {
+    if (e.button !== 0) return; // только левая кнопка
+    handleClick("mouse");
 });
 
-// Сброс — всё возвращаем в начальное состояние
+// Кнопка E на клавиатуре
+document.addEventListener("keydown", function (e) {
+    if (e.code !== "KeyE") return;                       // KeyE — работает и на русской раскладке (буква У)
+    if (e.repeat) return;                                // зажатая клавиша не кликает сама
+    if (!gameScreen.classList.contains("active")) return; // в магазине E не работает
+
+    handleClick("key");
+
+    // Кнопка на экране «нажимается», чтобы было видно клик
+    clickBtn.classList.add("pressed");
+    setTimeout(function () {
+        clickBtn.classList.remove("pressed");
+    }, 100);
+});
+
+// Сброс — всё возвращаем в начальное состояние (язык остаётся прежним)
 resetBtn.addEventListener("click", function () {
     count = 0;
     clickPower = 1;
     autoPerSecond = 0;
+    won = false;
     clearInterval(autoTimer); // останавливаем автокликер
     autoTimer = null;
-
-    messageEl.textContent = "";
 
     // Возвращаем все товары в магазин
     shopItems.forEach(function (item) {
@@ -252,7 +406,6 @@ resetBtn.addEventListener("click", function () {
     saveGame(); // сохраняем «чистое» состояние
 });
 
-// Загружаем сохранение и рисуем экран
-loadGame();
-renderShop();
-updateScreen();
+// ===== Запуск =====
+loadGame();                  // прогресс
+setLanguage(loadLanguage()); // язык (заодно рисует магазин и табло)
