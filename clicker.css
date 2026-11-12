@@ -2,14 +2,22 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     background: #f0f4f8;
+    color: #222;
+}
+
+button {
+    font-size: 24px;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit; /* кнопки берут шрифт дизайна */
 }
 
 /* ===== Экраны ===== */
 .screen {
     display: none; /* все экраны спрятаны */
     min-height: 100vh;
-    flex-direction: column;
-    align-items: center;
     box-sizing: border-box;
 }
 
@@ -17,13 +25,157 @@ body {
     display: flex; /* показываем только активный */
 }
 
-/* ===== Экран игры ===== */
-#gameScreen {
-    justify-content: center;
-    gap: 20px;
+/* =====================================================
+   ЭКРАН ИГРЫ — базовый вид, он же дизайн «Классика»
+   ===================================================== */
+
+/* Экран игры — это сетка. Каждый дизайн по-своему расставляет
+   в ней элементы через grid-template-areas */
+.game-screen.active {
+    display: grid;
 }
 
-#score {
+.game-screen {
+    grid-template-areas:
+        "score"
+        "power"
+        "click"
+        "message"
+        "reset";
+    justify-content: center;
+    align-content: center;
+    justify-items: center;
+    gap: 20px;
+    padding: 90px 20px 20px;
+    background: #f0f4f8;
+    color: #222;
+    font-family: Arial, sans-serif;
+    position: relative; /* чтобы слой декораций растянулся по экрану */
+    overflow: hidden;
+}
+
+/* ===== Слой декораций заднего фона ===== */
+.decor {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none; /* декорации не мешают нажимать */
+    z-index: 0;
+}
+
+/* Всё остальное — поверх декораций */
+.score,
+.power,
+.click-btn,
+.message,
+.reset-btn {
+    position: relative;
+    z-index: 1;
+}
+
+.lang-switch,
+.top-icons {
+    z-index: 2;
+}
+
+/* Пейзаж внизу экрана (рисуется в JS как SVG) */
+.scenery {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 38%;
+}
+
+/* Летающие / мерцающие значки */
+.decor-item {
+    position: absolute;
+    line-height: 1;
+    font-weight: bold;
+    opacity: var(--o); /* у каждого значка своя прозрачность (задаёт JS) */
+    user-select: none;
+}
+
+.decor-item.bob     { animation: decor-bob ease-in-out infinite; }
+.decor-item.twinkle { animation: decor-twinkle ease-in-out infinite; }
+.decor-item.fall    { animation: decor-fall linear infinite; }
+.decor-item.fly     { animation: decor-fly linear infinite; }
+.decor-item.climb   { animation: decor-climb ease-in-out infinite; }
+.decor-item.flicker { animation: decor-flicker ease-in-out infinite; }
+
+/* Паутинка над пауком */
+.decor-item.climb::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    width: 1px;
+    height: 600px;
+    background: rgba(255, 255, 255, 0.35);
+}
+
+/* покачивается вверх-вниз */
+@keyframes decor-bob {
+    0%, 100% { transform: translateY(0) rotate(-6deg); }
+    50%      { transform: translateY(-18px) rotate(6deg); }
+}
+
+/* мерцает */
+@keyframes decor-twinkle {
+    0%, 100% { opacity: var(--o); }
+    50%      { opacity: calc(var(--o) * 0.25); }
+}
+
+/* падает сверху вниз и покачивается в стороны */
+@keyframes decor-fall {
+    0%   { top: -8%;  transform: translateX(0); }
+    50%  { transform: translateX(30px); }
+    100% { top: 105%; transform: translateX(0); }
+}
+
+/* летит слева направо волной */
+@keyframes decor-fly {
+    0%   { left: -10%; transform: translateY(0); }
+    25%  { transform: translateY(-25px); }
+    75%  { transform: translateY(25px); }
+    100% { left: 110%; transform: translateY(0); }
+}
+
+/* паук ползает по ниточке */
+@keyframes decor-climb {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(50px); }
+}
+
+/* дрожащий огонёк */
+@keyframes decor-flicker {
+    0%, 100% { opacity: var(--o); transform: scale(1); }
+    30%      { opacity: calc(var(--o) * 0.6); transform: scale(0.95); }
+    60%      { opacity: var(--o); transform: scale(1.05); }
+}
+
+/* Если в системе включено «уменьшить движение» — декорации стоят на месте */
+@media (prefers-reduced-motion: reduce) {
+    .decor-item,
+    .decor::before,
+    .decor::after,
+    .smoke {
+        animation: none !important;
+    }
+}
+
+/* Фон «Классики»: цветные круги и точечный узор */
+.theme-classic .decor {
+    background:
+        radial-gradient(circle at 12% 25%, rgba(76, 175, 80, 0.18) 0 140px, transparent 141px),
+        radial-gradient(circle at 88% 72%, rgba(255, 179, 0, 0.2) 0 180px, transparent 181px),
+        radial-gradient(circle at 72% 12%, rgba(233, 30, 99, 0.12) 0 90px, transparent 91px),
+        radial-gradient(circle at 25% 85%, rgba(33, 150, 243, 0.14) 0 110px, transparent 111px),
+        radial-gradient(rgba(0, 0, 0, 0.08) 1.5px, transparent 2px) 0 0 / 24px 24px;
+}
+
+.score {
+    grid-area: score;
     font-size: 64px;
     font-weight: bold;
     padding: 10px 40px;
@@ -34,39 +186,42 @@ body {
     text-align: center;
 }
 
-#power {
+.power {
+    grid-area: power;
     font-size: 18px;
     color: #555;
 }
 
-button {
-    font-size: 24px;
-    padding: 15px 40px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
+.click-btn {
+    grid-area: click;
+    background: #4caf50;
+    color: white;
 }
 
-#clickBtn { background: #4caf50; color: white; }
-#clickBtn:active,
-#clickBtn.pressed { transform: scale(0.95); }
+.click-btn:active,
+.click-btn.pressed {
+    transform: scale(0.95);
+}
 
-#resetBtn {
+.reset-btn {
+    grid-area: reset;
     background: #e53935;
     color: white;
     font-size: 18px;
     padding: 10px 30px;
 }
 
-#message {
+.message {
+    grid-area: message;
     font-size: 36px;
     color: #e91e63;
     font-weight: bold;
     min-height: 45px;
+    text-align: center;
 }
 
-/* Переключатель языка в левом верхнем углу */
-#langSwitch {
+/* Переключатель языка — левый верхний угол */
+.lang-switch {
     position: fixed;
     top: 20px;
     left: 20px;
@@ -74,7 +229,7 @@ button {
     gap: 6px;
 }
 
-#langSwitch button {
+.lang-switch button {
     font-size: 16px;
     padding: 8px 12px;
     background: #ddd;
@@ -82,16 +237,21 @@ button {
     font-weight: bold;
 }
 
-#langSwitch button.active {
+.lang-switch button.active {
     background: #333;
     color: white;
 }
 
-/* Иконка магазина в правом верхнем углу */
-#shopIcon {
+/* Иконки магазинов — правый верхний угол */
+.top-icons {
     position: fixed;
     top: 20px;
     right: 20px;
+    display: flex;
+    gap: 12px;
+}
+
+.round-icon {
     width: 64px;
     height: 64px;
     padding: 0;
@@ -102,34 +262,430 @@ button {
     transition: transform 0.15s;
 }
 
-#shopIcon:hover { transform: scale(1.1); }
-
-/* ===== Экран магазина ===== */
-#shopScreen {
-    padding: 20px;
-    gap: 20px;
+.round-icon:hover {
+    transform: scale(1.1);
 }
 
-#shopHeader {
+/* =====================================================
+   ДИЗАЙН «ХЭЛЛОУИН»
+   табло-надгробие, кнопка-тыква, сброс-гроб
+   ===================================================== */
+.theme-halloween {
+    grid-template-areas:
+        "score"
+        "click"
+        "power"
+        "message"
+        "reset";
+    gap: 14px;
+    background: radial-gradient(circle at 50% 0%, #5b21b6 0%, #1a0b2e 55%, #07030d 100%);
+    color: #f5e6ff;
+    font-family: 'Rubik Wet Paint', cursive;
+}
+
+/* Табло — надгробная плита */
+.theme-halloween .score {
+    padding: 26px 50px 10px;
+    border-radius: 90px 90px 8px 8px;
+    background: linear-gradient(#7a7a7a, #3d3d3d);
+    color: #e5e5e5;
+    border: 3px solid #222;
+    box-shadow: 0 8px 0 #1b1b1b, 0 0 25px rgba(0, 0, 0, 0.7);
+    font-weight: normal;
+}
+
+.theme-halloween .score::before {
+    content: "R.I.P.";
+    display: block;
+    font-size: 16px;
+    color: #bbb;
+    letter-spacing: 3px;
+}
+
+/* Кнопка — тыква с хвостиком */
+.theme-halloween .click-btn {
+    position: relative;
+    width: 190px;
+    height: 150px;
+    padding: 0;
+    border-radius: 50%;
+    background:
+        radial-gradient(ellipse 25% 55% at 28% 50%, rgba(0, 0, 0, 0.15), transparent 70%),
+        radial-gradient(ellipse 25% 55% at 72% 50%, rgba(0, 0, 0, 0.15), transparent 70%),
+        radial-gradient(ellipse at 50% 40%, #ffb347 0%, #ff7518 45%, #b8430b 100%);
+    color: #2b0a00;
+    font-size: 22px;
+    box-shadow: 0 0 35px rgba(255, 117, 24, 0.55), inset 0 -12px 25px rgba(0, 0, 0, 0.35);
+}
+
+.theme-halloween .click-btn::before {
+    content: "";
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    width: 14px;
+    height: 24px;
+    background: #3f6212;
+    border-radius: 4px 4px 2px 2px;
+    transform: translateX(-50%) rotate(10deg);
+}
+
+/* Сброс — крышка гроба */
+.theme-halloween .reset-btn {
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 78% 100%, 22% 100%, 0 30%);
+    border-radius: 0;
+    padding: 18px 50px;
+    background: linear-gradient(#5a3520, #2e1a0e);
+    color: #e8dcc0;
+}
+
+.theme-halloween .message {
+    color: #ff2a2a;
+    text-shadow: 0 0 10px #7f0000;
+    font-weight: normal;
+}
+
+.theme-halloween .power {
+    color: #c4a5e8;
+    font-family: Arial, sans-serif;
+}
+
+.theme-halloween .round-icon {
+    background: #1a0b2e;
+    border: 2px solid #ff7518;
+    box-shadow: 0 0 14px #ff7518;
+}
+
+.theme-halloween .lang-switch button {
+    background: #2a1540;
+    color: #f5e6ff;
+    font-family: Arial, sans-serif;
+}
+
+.theme-halloween .lang-switch button.active {
+    background: #ff7518;
+    color: #1a0b2e;
+}
+
+/* Луна */
+.theme-halloween .decor {
+    background: radial-gradient(circle at 80% 20%, #fff3c4 0 55px, rgba(255, 230, 160, 0.18) 56px 90px, transparent 140px);
+}
+
+/* Туман над кладбищем */
+.theme-halloween .decor::after {
+    content: "";
+    position: absolute;
+    left: -50%;
+    right: -50%;
+    bottom: 0;
+    height: 30%;
+    background:
+        radial-gradient(ellipse at 30% 100%, rgba(190, 170, 230, 0.28), transparent 60%),
+        radial-gradient(ellipse at 70% 100%, rgba(190, 170, 230, 0.22), transparent 60%);
+    animation: fog-drift 20s ease-in-out infinite alternate;
+}
+
+@keyframes fog-drift {
+    from { transform: translateX(-10%); }
+    to   { transform: translateX(10%); }
+}
+
+/* =====================================================
+   ДИЗАЙН «НЕОН»
+   светящиеся рамки, острые углы, табло и кнопка рядом
+   ===================================================== */
+.theme-neon {
+    grid-template-areas:
+        "score   click"
+        "power   click"
+        "message message"
+        "reset   reset";
+    column-gap: 40px;
+    row-gap: 16px;
+    background:
+        linear-gradient(rgba(255, 0, 200, 0.1) 1px, transparent 1px) 0 0 / 40px 40px,
+        linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px) 0 0 / 40px 40px,
+        #05010d;
+    color: #e0e0ff;
+    font-family: 'Russo One', sans-serif;
+}
+
+.theme-neon .score {
+    background: transparent;
+    color: #0ff;
+    border: 3px solid #0ff;
+    border-radius: 0;
+    transform: skew(-8deg);
+    box-shadow: 0 0 15px #0ff, inset 0 0 15px rgba(0, 255, 255, 0.35);
+    text-shadow: 0 0 10px #0ff;
+    font-weight: normal;
+}
+
+.theme-neon .click-btn {
+    align-self: stretch;
+    background: rgba(255, 0, 200, 0.08);
+    color: #ff00c8;
+    border: 3px solid #ff00c8;
+    border-radius: 0;
+    transform: skew(-8deg);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 22px;
+    box-shadow: 0 0 18px #ff00c8, inset 0 0 18px rgba(255, 0, 200, 0.35);
+    text-shadow: 0 0 8px #ff00c8;
+}
+
+.theme-neon .click-btn:active,
+.theme-neon .click-btn.pressed {
+    transform: skew(-8deg) scale(0.95);
+    background: rgba(255, 0, 200, 0.25);
+}
+
+.theme-neon .reset-btn {
+    background: transparent;
+    color: #ffe600;
+    border: 2px dashed #ffe600;
+    border-radius: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 14px;
+    box-shadow: 0 0 10px rgba(255, 230, 0, 0.4);
+}
+
+.theme-neon .message {
+    color: #39ff14;
+    text-shadow: 0 0 12px #39ff14;
+    font-weight: normal;
+}
+
+.theme-neon .power {
+    color: #7ff;
+}
+
+.theme-neon .round-icon {
+    border-radius: 0;
+    background: transparent;
+    border: 2px solid #0ff;
+    box-shadow: 0 0 12px #0ff;
+}
+
+.theme-neon .lang-switch button {
+    background: transparent;
+    color: #ff00c8;
+    border: 1px solid #ff00c8;
+    border-radius: 0;
+}
+
+.theme-neon .lang-switch button.active {
+    background: #ff00c8;
+    color: #05010d;
+}
+
+/* Значки на фоне светятся своим цветом */
+.theme-neon .decor-item {
+    text-shadow: 0 0 8px currentColor;
+    font-family: monospace;
+}
+
+/* Ретро-солнце: верхняя половина целая, нижняя — в полоску */
+.theme-neon .decor::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 22%;
+    width: 340px;
+    height: 340px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: linear-gradient(#ffe600, #ff6ec7 55%, #ff00c8);
+    filter: drop-shadow(0 0 30px #ff00c8);
+    -webkit-mask-image:
+        linear-gradient(#000 50%, transparent 50%),
+        repeating-linear-gradient(#000 0 12px, transparent 12px 18px);
+    mask-image:
+        linear-gradient(#000 50%, transparent 50%),
+        repeating-linear-gradient(#000 0 12px, transparent 12px 18px);
+}
+
+/* Город стоит на линии горизонта */
+.theme-neon .scenery {
+    bottom: 18%;
+    height: 32%;
+}
+
+/* Неоновый пол-сетка, уходящий вдаль */
+.theme-neon .decor::after {
+    content: "";
+    position: absolute;
+    top: 82%;
+    left: -100%;
+    right: -100%;
+    height: 70%;
+    background:
+        linear-gradient(90deg, rgba(255, 0, 200, 0.6) 2px, transparent 2px) 0 0 / 60px 100%,
+        linear-gradient(rgba(255, 0, 200, 0.6) 2px, transparent 2px) 0 0 / 100% 40px,
+        #12002a;
+    transform-origin: 50% 0;
+    transform: perspective(250px) rotateX(70deg);
+}
+
+/* На узком экране телефона табло и кнопка встают друг под другом */
+@media (max-width: 520px) {
+    .theme-neon {
+        grid-template-areas:
+            "score"
+            "power"
+            "click"
+            "message"
+            "reset";
+    }
+}
+
+/* =====================================================
+   ДИЗАЙН «ВЕЧНАЯ ЗИМА»
+   снег, ледяное табло, кнопка-сугроб, сброс-леденец
+   ===================================================== */
+.theme-winter {
+    grid-template-areas:
+        "message message"
+        "score   score"
+        "click   click"
+        "power   reset";
+    column-gap: 30px;
+    row-gap: 22px;
+    /* спокойное ночное небо с едва заметным северным сиянием */
+    background:
+        radial-gradient(ellipse 60% 25% at 70% 15%, rgba(120, 220, 200, 0.12), transparent 70%),
+        radial-gradient(ellipse 50% 20% at 30% 10%, rgba(140, 160, 255, 0.1), transparent 70%),
+        linear-gradient(#0d1f3d, #23406f 60%, #4a6aa3);
+    color: white;
+    font-family: 'Comfortaa', sans-serif;
+}
+
+/* Табло — матовая льдинка */
+.theme-winter .score {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(6px);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 30px;
+    color: white;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 0 12px #9cd3ff;
+}
+
+/* Кнопка — пухлый сугроб, «проваливается» при нажатии */
+.theme-winter .click-btn {
+    border-radius: 999px;
+    padding: 22px 60px;
+    background: linear-gradient(#ffffff, #cfe8ff);
+    color: #1e3a6e;
+    font-weight: bold;
+    box-shadow: 0 6px 0 #8fb8e8, 0 12px 25px rgba(0, 0, 0, 0.35);
+}
+
+.theme-winter .click-btn:active,
+.theme-winter .click-btn.pressed {
+    transform: translateY(5px);
+    box-shadow: 0 1px 0 #8fb8e8, 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+/* Сброс — полосатый леденец */
+.theme-winter .reset-btn {
+    justify-self: start;
+    border-radius: 999px;
+    background: repeating-linear-gradient(45deg, #e11d48 0 10px, #ffffff 10px 20px);
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 0 3px #000, 0 0 3px #000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.theme-winter .power {
+    justify-self: end;
+    align-self: center;
+    color: #cfe8ff;
+}
+
+.theme-winter .message {
+    color: white;
+    text-shadow: 0 0 14px #7dd3fc;
+}
+
+.theme-winter .round-icon {
+    background: white;
+    box-shadow: 0 4px 0 #8fb8e8;
+}
+
+.theme-winter .lang-switch button {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 999px;
+}
+
+.theme-winter .lang-switch button.active {
+    background: white;
+    color: #1e3a6e;
+}
+
+/* Луна */
+.theme-winter .decor {
+    background: radial-gradient(circle at 18% 22%, #f8fbff 0 40px, rgba(220, 235, 255, 0.2) 41px 70px, transparent 110px);
+}
+
+/* Деревня занимает чуть больше места внизу */
+.theme-winter .scenery {
+    height: 45%;
+}
+
+/* Дым из труб медленно поднимается и тает */
+.theme-winter .smoke {
+    transform-box: fill-box;
+    transform-origin: center;
+    opacity: 0;
+    animation: smoke-rise 8s ease-out infinite;
+}
+
+@keyframes smoke-rise {
+    0%   { transform: translate(0, 0) scale(0.8); opacity: 0; }
+    25%  { opacity: 0.45; }
+    100% { transform: translate(12px, -35px) scale(1.8); opacity: 0; }
+}
+
+/* =====================================================
+   ЭКРАНЫ МАГАЗИНОВ
+   ===================================================== */
+.shop-screen {
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    gap: 20px;
+    /* лёгкий точечный узор поверх мягкого градиента */
+    background:
+        radial-gradient(rgba(0, 0, 0, 0.07) 1.5px, transparent 2px) 0 0 / 22px 22px,
+        linear-gradient(135deg, #e0f2fe, #fdf2f8);
+}
+
+.shop-header {
     width: 100%;
-    max-width: 700px;
+    max-width: 900px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-#shopHeader h2 {
+.shop-header h2 {
     margin: 0;
     font-size: 32px;
 }
 
-#backBtn {
+.back-btn {
     font-size: 18px;
     padding: 10px 20px;
     background: #ddd;
 }
 
-#balance {
+.balance {
     font-size: 24px;
     font-weight: bold;
     padding: 8px 16px;
@@ -141,12 +697,12 @@ button {
 }
 
 /* Сетка карточек */
-#cards {
+.cards {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
-    max-width: 700px;
+    max-width: 900px;
 }
 
 /* Карточка товара */
@@ -189,6 +745,12 @@ button {
     font-weight: bold;
 }
 
+.card-status {
+    margin-top: 4px;
+    color: #888;
+    font-weight: bold;
+}
+
 /* Выбранная карточка: подсветка и толстая обводка */
 .card.selected {
     background: #fff8d6;
@@ -226,8 +788,56 @@ button {
     display: block;
 }
 
-/* Плашка с описанием */
-#itemInfo {
+/* ===== Карточки дизайнов ===== */
+.card.theme-card {
+    width: 200px; /* внутри квадрат 174×174 */
+}
+
+/* Картинка — уменьшенная копия стартового экрана */
+.card-icon.theme-preview {
+    position: relative;
+    overflow: hidden;
+    display: block;
+}
+
+/* Внутри лежит настоящий экран игры размером 600×600,
+   уменьшенный до 174×174 (174 / 600 = 0.29) */
+.preview-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 600px;
+    height: 600px;
+    transform: scale(0.29);
+    transform-origin: 0 0;
+    pointer-events: none; /* копия не нажимается */
+}
+
+.preview-box .game-screen {
+    display: grid;
+    min-height: 0;
+    height: 100%;
+}
+
+/* Зелёная галочка на дизайне, который сейчас включён */
+.card.active-theme::after {
+    content: "✓";
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    border-radius: 50%;
+    background: #4caf50;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== Плашка с описанием ===== */
+.item-info {
     width: 100%;
     max-width: 400px;
     padding: 16px;
@@ -245,16 +855,26 @@ button {
 }
 
 /* Плашка выплывает */
-#itemInfo.show {
+.item-info.show {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
 }
 
-#itemInfo h3 { margin: 0 0 8px; }
-#itemInfo p { margin: 0 0 12px; }
+.item-info h3 { margin: 0 0 8px; }
+.item-info p { margin: 0 0 12px; line-height: 1.5; }
 
-#confirmBtn {
+/* У дизайнов описание длинное — плашка пошире, текст по левому краю */
+.theme-info {
+    max-width: 560px;
+}
+
+.theme-info p {
+    text-align: left;
+    font-style: italic;
+}
+
+.confirm-btn {
     width: 100%;
     font-size: 18px;
     padding: 10px;
@@ -263,7 +883,13 @@ button {
     font-weight: bold;
 }
 
-#shopError {
+.confirm-btn:disabled {
+    background: #777;
+    color: #ccc;
+    cursor: default;
+}
+
+.shop-error {
     margin-top: 8px;
     color: #ff8a80;
     font-size: 14px;

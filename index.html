@@ -4,47 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Кликер</title>
+    <!-- Шрифты для дизайнов (все поддерживают русские буквы) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Russo+One&family=Rubik+Wet+Paint&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="clicker.css">
 </head>
 <body>
     <!-- Тексты с атрибутом data-i18n JS подставляет из словаря на выбранном языке -->
 
     <!-- ===== Экран игры ===== -->
-    <div id="gameScreen" class="screen active">
+    <!-- Класс theme-... задаёт дизайн экрана -->
+    <div id="gameScreen" class="screen game-screen active theme-classic">
+        <!-- Задний фон с декорациями (JS заполняет его под выбранный дизайн) -->
+        <div class="decor"></div>
+
         <!-- Переключатель языка -->
-        <div id="langSwitch">
+        <div class="lang-switch">
             <button data-lang="ru">RU</button>
             <button data-lang="en">EN</button>
             <button data-lang="de">DE</button>
         </div>
 
-        <!-- Иконка магазина -->
-        <button id="shopIcon">🛒</button>
+        <!-- Иконки: магазин дизайнов и магазин улучшений -->
+        <div class="top-icons">
+            <button id="themesIcon" class="round-icon">🎨</button>
+            <button id="shopIcon" class="round-icon">🛒</button>
+        </div>
 
-        <div id="score">0</div>
-        <div id="power"></div>
-        <button id="clickBtn" data-i18n="click"></button>
-        <div id="message"></div>
-        <button id="resetBtn" data-i18n="reset"></button>
+        <div id="score" class="score">0</div>
+        <div id="power" class="power"></div>
+        <button id="clickBtn" class="click-btn" data-i18n="click"></button>
+        <div id="message" class="message"></div>
+        <button id="resetBtn" class="reset-btn" data-i18n="reset"></button>
     </div>
 
-    <!-- ===== Экран магазина ===== -->
-    <div id="shopScreen" class="screen">
-        <div id="shopHeader">
-            <button id="backBtn" data-i18n="back"></button>
+    <!-- ===== Экран магазина улучшений ===== -->
+    <div id="shopScreen" class="screen shop-screen">
+        <div class="shop-header">
+            <button id="backBtn" class="back-btn" data-i18n="back"></button>
             <h2 data-i18n="shop"></h2>
-            <div id="balance">0</div>
+            <div class="balance">0</div>
         </div>
 
         <!-- Сюда JS добавит карточки товаров -->
-        <div id="cards"></div>
+        <div id="cards" class="cards"></div>
 
         <!-- Плашка с описанием выбранного товара -->
-        <div id="itemInfo">
+        <div id="itemInfo" class="item-info">
             <h3 id="infoName"></h3>
             <p id="infoDesc"></p>
-            <button id="confirmBtn" data-i18n="confirm"></button>
-            <div id="shopError"></div>
+            <button id="confirmBtn" class="confirm-btn" data-i18n="confirm"></button>
+            <div id="shopError" class="shop-error"></div>
+        </div>
+    </div>
+
+    <!-- ===== Экран магазина дизайнов ===== -->
+    <div id="themesScreen" class="screen shop-screen">
+        <div class="shop-header">
+            <button id="themesBackBtn" class="back-btn" data-i18n="back"></button>
+            <h2 data-i18n="designs"></h2>
+            <div class="balance">0</div>
+        </div>
+
+        <!-- Сюда JS добавит карточки дизайнов -->
+        <div id="themeCards" class="cards"></div>
+
+        <!-- Плашка с описанием выбранного дизайна -->
+        <div id="themeInfo" class="item-info theme-info">
+            <h3 id="themeInfoName"></h3>
+            <p id="themeInfoDesc"></p>
+            <button id="themeActionBtn" class="confirm-btn"></button>
+            <div id="themeError" class="shop-error"></div>
         </div>
     </div>
 
