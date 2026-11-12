@@ -129,6 +129,26 @@ const texts = {
             winter: {
                 name: "Вечная зима",
                 description: "Метель замела все дороги, и только в окнах маленькой деревни ещё горит свет. Табло покрыто инеем, кнопка холодная и мягкая, как свежий снег, а кнопка сброса пахнет мятным леденцом. Кликай, пока пальцы не замёрзли. Говорят, эта зима не закончится, пока кто-нибудь не наберёт миллион…"
+            },
+            ocean: {
+                name: "Глубина",
+                description: "Говорят, на дне лежит затонувший корабль, капитан которого поклялся кликать до последнего пузырька воздуха. Табло — его старый иллюминатор, кнопка — жемчужный пузырь, который никак не может всплыть. Рыбы проплывают мимо и делают вид, что ничего не замечают. Чем глубже ты кликаешь, тем тише становится наверху… а снизу кто-то начинает кликать в ответ."
+            },
+            sakura: {
+                name: "Сакура",
+                description: "В этом саду сакура цветёт круглый год, и никто не помнит, кто её посадил. Красный фонарик светится сам по себе, а на деревянной табличке каждое утро появляется новый счёт, хотя на ночь сад запирают. Старый садовник говорит: каждый лепесток — это чей-то клик. Когда упадёт последний, сад исчезнет. Так что кликай — лепестков пока хватает."
+            },
+            desert: {
+                name: "Пески фараона",
+                description: "Караван ушёл в пустыню три тысячи лет назад и до сих пор не вернулся. Говорят, он ищет пирамиду, на вершине которой лежит золотой диск солнца — та самая кнопка. Каждый клик стирает одну песчинку с каменной таблички, и однажды под ней проступит имя того, кто кликал здесь до тебя. Только не оглядывайся, когда ветер начнёт шептать твоё."
+            },
+            space: {
+                name: "Космос",
+                description: "Станция «Кликер-1» молчит уже сорок лет, но её главный компьютер всё ещё считает. Большая красная кнопка что-то запускает — инструкция давно потерялась, и никто не знает, что именно. На горизонте Луны мигает огонёк базы, хотя там никого не должно быть. Каждый твой клик уходит сигналом в пустоту. Пока никто не ответил. Пока."
+            },
+            pixel: {
+                name: "Пиксели",
+                description: "Этот кликер выпал из старого игрового автомата, когда по нему кто-то слишком сильно стукнул. Внутри всё ещё 1987 год: облака из квадратиков, монетки, которые никто не собирает, и сердечки, которые нельзя потерять. Автомат не принимает жетоны — только клики. Поставишь рекорд, и, может быть, он наконец отпустит тебя домой. А может, и нет: надпись GAME OVER здесь ещё никто не видел."
             }
         }
     },
@@ -182,6 +202,26 @@ const texts = {
             winter: {
                 name: "Eternal Winter",
                 description: "The blizzard has buried every road, and only the windows of a small village still glow. The board is covered in frost, the button is cold and soft like fresh snow, and the reset button smells of peppermint candy. Keep clicking before your fingers freeze. They say this winter won't end until someone reaches a million…"
+            },
+            ocean: {
+                name: "The Deep",
+                description: "They say a sunken ship lies on the seabed, and its captain swore to keep clicking until the last bubble of air. The board is his old porthole, the button is a pearly bubble that never manages to rise. Fish swim past pretending not to notice. The deeper you click, the quieter it gets up above… and from below, something starts clicking back."
+            },
+            sakura: {
+                name: "Sakura",
+                description: "In this garden the cherry trees bloom all year round, and no one remembers who planted them. The red lantern glows by itself, and every morning a new score appears on the wooden plaque, even though the garden is locked at night. The old gardener says every petal is someone's click. When the last one falls, the garden will vanish. So keep clicking — there are still enough petals."
+            },
+            desert: {
+                name: "Pharaoh's Sands",
+                description: "A caravan set off into the desert three thousand years ago and has never returned. They say it is searching for a pyramid with a golden sun disc on its peak — this very button. Every click brushes one grain of sand off the stone tablet, and one day the name of whoever clicked here before you will show through. Just don't look back when the wind starts whispering yours."
+            },
+            space: {
+                name: "Space",
+                description: "Station Clicker-1 has been silent for forty years, but its main computer is still counting. The big red button launches something — the manual was lost long ago and no one knows what exactly. A light blinks at the lunar base on the horizon, though no one is supposed to be there. Every click goes out as a signal into the void. No one has answered yet. Yet."
+            },
+            pixel: {
+                name: "Pixels",
+                description: "This clicker fell out of an old arcade machine when someone hit it too hard. Inside it's still 1987: clouds made of squares, coins nobody collects and hearts you can't lose. The machine doesn't take tokens — only clicks. Set a high score and maybe it will finally let you go home. Or maybe not: nobody here has ever seen the words GAME OVER."
             }
         }
     },
@@ -235,6 +275,26 @@ const texts = {
             winter: {
                 name: "Ewiger Winter",
                 description: "Der Schneesturm hat alle Wege begraben, und nur in den Fenstern eines kleinen Dorfes brennt noch Licht. Die Anzeige ist mit Raureif bedeckt, der Knopf ist kalt und weich wie frischer Schnee, und der Zurücksetzen-Knopf duftet nach Pfefferminzbonbons. Klick weiter, bevor deine Finger erfrieren. Man sagt, dieser Winter endet erst, wenn jemand eine Million erreicht…"
+            },
+            ocean: {
+                name: "Die Tiefe",
+                description: "Man sagt, auf dem Meeresgrund liegt ein gesunkenes Schiff, dessen Kapitän schwor, bis zur letzten Luftblase zu klicken. Die Anzeige ist sein altes Bullauge, der Knopf eine perlmuttfarbene Blase, die es nie nach oben schafft. Fische schwimmen vorbei und tun so, als sähen sie nichts. Je tiefer du klickst, desto stiller wird es oben… und von unten beginnt etwas zurückzuklicken."
+            },
+            sakura: {
+                name: "Sakura",
+                description: "In diesem Garten blühen die Kirschbäume das ganze Jahr, und niemand weiß mehr, wer sie gepflanzt hat. Die rote Laterne leuchtet von selbst, und jeden Morgen steht ein neuer Punktestand auf der Holztafel, obwohl der Garten nachts verschlossen ist. Der alte Gärtner sagt, jedes Blütenblatt ist jemandes Klick. Wenn das letzte fällt, verschwindet der Garten. Also klick weiter — noch gibt es genug Blütenblätter."
+            },
+            desert: {
+                name: "Sand des Pharaos",
+                description: "Vor dreitausend Jahren zog eine Karawane in die Wüste und ist bis heute nicht zurückgekehrt. Man sagt, sie sucht eine Pyramide, auf deren Spitze eine goldene Sonnenscheibe liegt — genau dieser Knopf. Jeder Klick wischt ein Sandkorn von der Steintafel, und eines Tages erscheint darunter der Name dessen, der hier vor dir geklickt hat. Dreh dich nur nicht um, wenn der Wind beginnt, deinen zu flüstern."
+            },
+            space: {
+                name: "Weltraum",
+                description: "Die Station Klicker-1 schweigt seit vierzig Jahren, doch ihr Hauptcomputer zählt immer noch. Der große rote Knopf startet etwas — die Anleitung ist längst verloren, und niemand weiß, was genau. Am Mondhorizont blinkt ein Licht der Basis, obwohl dort niemand sein sollte. Jeder Klick geht als Signal hinaus ins Nichts. Bisher hat niemand geantwortet. Bisher."
+            },
+            pixel: {
+                name: "Pixel",
+                description: "Dieser Klicker fiel aus einem alten Spielautomaten, als jemand zu fest dagegen schlug. Drinnen ist immer noch 1987: Wolken aus Quadraten, Münzen, die niemand einsammelt, und Herzen, die man nicht verlieren kann. Der Automat nimmt keine Jetons — nur Klicks. Stell einen Rekord auf, und vielleicht lässt er dich endlich nach Hause. Oder auch nicht: Die Worte GAME OVER hat hier noch niemand gesehen."
             }
         }
     }
@@ -336,8 +396,7 @@ const musicTracks = {
                  E5 G5 E5 C5 - - G4 - | A4 C5 E5 A5 - - G5 - | F5 E5 D5 C5 - - A4 - | B4 C5 D5 G5 - - - -`,
         lead: { wave: "triangle", volume: 0.12, length: 1.6 },
         pad: { wave: "sine", volume: 0.045, length: 8, attack: 0.15, hold: 0.6 },
-        bassInst: { wave: "sine", volume: 0.16, length: 2 },
-        drums: false
+        bassInst: { wave: "sine", volume: 0.16, length: 2 }
     },
 
     // Жуткая музыкальная шкатулка, ре минор с тревожными нотами
@@ -350,8 +409,7 @@ const musicTracks = {
                  D6 - A5 - F5 - D5 - | F5 - D5 - Bb4 - D5 - | Bb4 - D5 - G5 - Bb5 - | A5 G#5 A5 - E5 - C#5 -`,
         lead: { wave: "sine", volume: 0.1, length: 3, overtone: 4 },
         pad: { wave: "sawtooth", volume: 0.03, length: 8, attack: 0.6, hold: 0.6, filter: 700, detunes: [-10, 10] },
-        bassInst: { wave: "sine", volume: 0.18, length: 7 },
-        drums: false
+        bassInst: { wave: "sine", volume: 0.18, length: 7 }
     },
 
     // Синтвейв: переливы синтезатора, пульсирующий бас и бит, ля минор
@@ -364,7 +422,8 @@ const musicTracks = {
         lead: { wave: "sawtooth", volume: 0.05, length: 0.9, filter: 2200 },
         pad: { wave: "sawtooth", volume: 0.025, length: 8, attack: 0.2, hold: 0.7, filter: 1200, detunes: [-12, 12] },
         bassInst: { wave: "sawtooth", volume: 0.1, length: 0.9, filter: 450 },
-        drums: true
+        kick: "x---x---",  // бочка на шагах с «x»
+        hat: "-x-x-x-x"    // тарелочка на шагах с «x»
     },
 
     // Тихие хрустальные колокольчики, фа мажор
@@ -377,8 +436,74 @@ const musicTracks = {
                  A5 - - C6 F6 - - - | F6 - E6 D6 - - A5 - | Bb5 - D6 - F6 - D6 - | E6 - D6 - C6 - - -`,
         lead: { wave: "sine", volume: 0.09, length: 4, overtone: 4 },
         pad: { wave: "sine", volume: 0.05, length: 8, attack: 0.5, hold: 0.6 },
-        bassInst: { wave: "sine", volume: 0.12, length: 4 },
-        drums: false
+        bassInst: { wave: "sine", volume: 0.12, length: 4 }
+    },
+
+    // Медленная мечтательная мелодия, как под водой, ми мажор
+    ocean: {
+        bpm: 72,
+        chords: [["E3", "G#3", "B3", "D#4"], ["C#3", "E3", "G#3", "B3"], ["A2", "C#3", "E3", "G#3"], ["B2", "D#3", "F#3", "A3"]],
+        bass: ["E2", "C#2", "A1", "B1"],
+        bassPattern: "x-------",
+        melody: `B5 - G#5 - E5 - D#5 - | E5 - - - C#5 - B4 - | C#5 - E5 - G#5 - A5 - | F#5 - - - D#5 - - -
+                 G#5 - B5 - G#5 - E5 - | C#6 - B5 - G#5 - E5 - | A5 - G#5 - E5 - C#5 - | B4 - D#5 - F#5 - - -`,
+        lead: { wave: "sine", volume: 0.1, length: 3, overtone: 2 },
+        pad: { wave: "sine", volume: 0.04, length: 8, attack: 0.9, hold: 0.6 },
+        bassInst: { wave: "sine", volume: 0.15, length: 8 }
+    },
+
+    // Пентатоника, щипковый звук как у японского кото, ля минор
+    sakura: {
+        bpm: 76,
+        chords: [["A3", "C4", "E4"], ["F3", "A3", "C4"], ["G3", "C4", "D4"], ["E3", "G3", "B3"]],
+        bass: ["A1", "F1", "G1", "E1"],
+        bassPattern: "x---x---",
+        melody: `E5 - A5 - C6 - A5 G5 | - - G5 - E5 - D5 - | E5 - G5 A5 - - E5 D5 | C5 - D5 - E5 - - -
+                 A5 - C6 D6 E6 - D6 C6 | A5 - G5 - A5 - - - | C6 - A5 G5 E5 - G5 - | A5 - - - - - - -`,
+        lead: { wave: "triangle", volume: 0.11, length: 1.5 },
+        pad: { wave: "sine", volume: 0.04, length: 8, attack: 0.6, hold: 0.6 },
+        bassInst: { wave: "sine", volume: 0.13, length: 4 }
+    },
+
+    // Восточный лад с «пустынными» интервалами и ритм как у барабана-дарбуки
+    desert: {
+        bpm: 92,
+        chords: [["E3", "G#3", "B3"], ["F3", "A3", "C4"], ["D3", "F3", "A3"], ["E3", "G#3", "B3"]],
+        bass: ["E2", "F2", "D2", "E2"],
+        bassPattern: "x--x--x-",
+        melody: `E5 F5 G#5 A5 B5 - A5 G#5 | F5 - E5 - F5 G#5 F5 - | D5 E5 F5 E5 D5 C5 B4 - | C5 B4 A4 G#4 E4 - - -`,
+        lead: { wave: "sawtooth", volume: 0.06, length: 1.2, filter: 1800 },
+        pad: { wave: "sawtooth", volume: 0.02, length: 8, attack: 0.5, hold: 0.7, filter: 600, detunes: [-6, 6] },
+        bassInst: { wave: "triangle", volume: 0.15, length: 2 },
+        kick: "x--x--x-",
+        hat: "--x-x--x"
+    },
+
+    // Космический эмбиент: медленные звенящие ноты и широкая подложка, фа лидийский
+    space: {
+        bpm: 88,
+        chords: [["F3", "A3", "C4", "E4"], ["G3", "B3", "D4"], ["A3", "C4", "E4"], ["G3", "B3", "D4"]],
+        bass: ["F1", "G1", "A1", "G1"],
+        bassPattern: "x-------",
+        melody: `C6 - - B5 A5 - E5 - | D6 - - - B5 - G5 - | E6 - - C6 A5 - E5 - | D6 - B5 - G5 - - -`,
+        lead: { wave: "sine", volume: 0.09, length: 5, overtone: 3 },
+        pad: { wave: "sawtooth", volume: 0.025, length: 8, attack: 1, hold: 0.6, filter: 900, detunes: [-8, 8] },
+        bassInst: { wave: "sine", volume: 0.15, length: 8 }
+    },
+
+    // Бодрый чиптюн, как на старой приставке, до мажор (без подложки — только «квадратный» звук)
+    pixel: {
+        bpm: 140,
+        chords: [["C4", "E4", "G4"], ["G3", "B3", "D4"], ["A3", "C4", "E4"], ["F3", "A3", "C4"]],
+        bass: ["C2", "G1", "A1", "F1"],
+        bassPattern: "x-x-x-x-",
+        melody: `C5 E5 G5 C6 G5 E5 C5 E5 | D5 G5 B5 D6 B5 G5 D5 G5 | E5 A5 C6 E6 C6 A5 E5 A5 | F5 A5 C6 F6 E6 D6 C6 B5
+                 E6 - E6 - C6 - G5 - | B5 - B5 A5 G5 - - - | A5 - C6 - E6 - D6 C6 | A5 G5 F5 E5 D5 - - -`,
+        lead: { wave: "square", volume: 0.045, length: 0.9 },
+        pad: null,
+        bassInst: { wave: "triangle", volume: 0.16, length: 0.9 },
+        kick: "x---x---",
+        hat: "--x---x-"
     }
 };
 
@@ -495,7 +620,7 @@ function playStep(track, step, time) {
     const bar = Math.floor(step / 8) % track.chords.length;
     const inBar = step % 8;
 
-    if (inBar === 0) {
+    if (inBar === 0 && track.pad) {
         track.chords[bar].forEach(function (note) {
             playTone(note, time, stepTime * track.pad.length, track.pad, out);
         });
@@ -510,10 +635,9 @@ function playStep(track, step, time) {
         playTone(note, time, stepTime * track.lead.length, track.lead, out);
     }
 
-    if (track.drums) {
-        if (inBar % 4 === 0) playKick(time, out);
-        if (inBar % 2 === 1) playHat(time, out);
-    }
+    // ударные — по своим узорам, как у баса
+    if (track.kick && track.kick[inBar] === "x") playKick(time, out);
+    if (track.hat && track.hat[inBar] === "x") playHat(time, out);
 }
 
 // Каждые 50 мс подкладываем ноты на четверть секунды вперёд — так музыка не заикается
@@ -649,7 +773,12 @@ const themes = [
     { id: "classic", price: 0 },
     { id: "halloween", price: 100 },
     { id: "neon", price: 150 },
-    { id: "winter", price: 200 }
+    { id: "winter", price: 200 },
+    { id: "ocean", price: 250 },
+    { id: "sakura", price: 300 },
+    { id: "desert", price: 350 },
+    { id: "space", price: 400 },
+    { id: "pixel", price: 500 }
 ];
 
 // Повесить на элемент класс нужного дизайна (и снять остальные)
@@ -710,6 +839,70 @@ const decorConfig = {
         { symbols: ["✦"], count: 8, anim: "twinkle",
           size: [6, 10], opacity: [0.3, 0.6], duration: [4, 7], top: [0, 40],
           colors: ["#ffffff"] }
+    ],
+    ocean: [
+        { symbols: ["○", "◦", "°"], count: 30, anim: "rise",
+          size: [8, 20], opacity: [0.3, 0.7], duration: [7, 15],
+          colors: ["#e0f7ff", "#a5f3fc"] },
+        { symbols: ["🐟", "🐠", "🐡"], count: 7, anim: "swim",
+          size: [22, 40], opacity: [0.75, 0.95], duration: [14, 26], top: [15, 62] },
+        { symbols: ["🐢"], count: 1, anim: "swim",
+          size: [36, 44], opacity: [0.85, 0.9], duration: [30, 40], top: [25, 45] },
+        { symbols: ["🐙"], count: 1, anim: "bob",
+          size: [38, 46], opacity: [0.6, 0.7], duration: [6, 8], top: [40, 55] },
+        { symbols: ["🐚", "🦀", "⭐"], count: 5, anim: "still",
+          size: [18, 26], opacity: [0.85, 1], duration: [1, 1], top: [88, 95] }
+    ],
+    sakura: [
+        { symbols: ["🌸", "✿", "❀"], count: 26, anim: "fall",
+          size: [10, 22], opacity: [0.5, 0.9], duration: [10, 20],
+          colors: ["#f472b6", "#f9a8d4", "#fbcfe8"] },
+        { symbols: ["🦋"], count: 2, anim: "fly",
+          size: [18, 26], opacity: [0.85, 0.95], duration: [16, 24], top: [20, 50] },
+        { symbols: ["•"], count: 12, anim: "twinkle",          // светлячки
+          size: [5, 9], opacity: [0.5, 0.9], duration: [2, 4], top: [55, 85],
+          colors: ["#fff3b0"] }
+    ],
+    desert: [
+        { symbols: ["·", "•"], count: 30, anim: "drift",      // песок на ветру
+          size: [4, 10], opacity: [0.3, 0.6], duration: [5, 10], top: [40, 95],
+          colors: ["#fff4d6", "#f6d7a7"] },
+        { symbols: ["🦅"], count: 2, anim: "fly",
+          size: [20, 28], opacity: [0.6, 0.75], duration: [18, 26], top: [8, 30] },
+        { symbols: ["🐫"], className: "flip silhouette", count: 3, anim: "drift", // караван-силуэт
+          size: [28, 34], opacity: [0.8, 0.9], duration: [70, 90], top: [80, 83] },
+        { symbols: ["🦂"], count: 2, anim: "still",
+          size: [16, 20], opacity: [0.8, 0.9], duration: [1, 1], top: [91, 95] }
+    ],
+    space: [
+        { symbols: ["·", "•", "✦", "★"], count: 60, anim: "twinkle",
+          size: [4, 14], opacity: [0.4, 1], duration: [2, 6], top: [0, 62],
+          colors: ["#ffffff", "#c7d2fe", "#fde68a"] },
+        { symbols: ["☄"], count: 2, anim: "fly",
+          size: [20, 28], opacity: [0.7, 0.9], duration: [9, 14], top: [5, 35],
+          colors: ["#a5f3fc"] },
+        { symbols: ["🚀"], count: 1, anim: "fly",
+          size: [28, 32], opacity: [0.95, 1], duration: [16, 20], top: [10, 30] },
+        { symbols: ["🛰️"], count: 1, anim: "fly",
+          size: [26, 30], opacity: [0.85, 0.9], duration: [30, 36], top: [35, 50] },
+        { symbols: ["🛸"], count: 1, anim: "bob",
+          size: [32, 38], opacity: [0.85, 0.95], duration: [4, 6], top: [12, 22] },
+        { symbols: ["👨‍🚀"], count: 1, anim: "bob",
+          size: [34, 40], opacity: [0.9, 1], duration: [6, 8], top: [38, 52] }
+    ],
+    pixel: [
+        { symbols: [""], className: "pcloud", count: 6, anim: "drift", // пиксельные облака
+          size: [6, 10], opacity: [0.95, 1], duration: [50, 90], top: [3, 35] },
+        { symbols: ["★"], count: 10, anim: "twinkle",
+          size: [12, 18], opacity: [0.6, 1], duration: [1.5, 3], top: [5, 50],
+          colors: ["#ffe600"] },
+        { symbols: ["🪙"], count: 7, anim: "bob",
+          size: [18, 26], opacity: [0.9, 1], duration: [2, 4], top: [35, 60] },
+        { symbols: ["♥"], count: 4, anim: "bob",
+          size: [16, 24], opacity: [0.9, 1], duration: [2, 4], top: [20, 55],
+          colors: ["#e53935"] },
+        { symbols: ["👾"], count: 2, anim: "bob",
+          size: [24, 32], opacity: [0.85, 0.95], duration: [3, 5], top: [15, 45] }
     ]
 };
 
@@ -941,8 +1134,268 @@ const scenery = {
              svgTree(1090, 290, 140, "#0f2a3d") + svgTree(1170, 296, 95, "#0f2a3d");
 
         return s + "</svg>";
+    },
+
+    // Морское дно: скалы, затонувший корабль, сундук, водоросли, кораллы
+    ocean: function (random) {
+        let s = SVG_START;
+        s += '<path d="M0 300 L0 205 Q80 165 160 195 Q240 145 330 190 L420 180 Q520 135 600 185 Q700 155 800 195 Q900 145 1000 185 Q1100 165 1200 195 L1200 300 Z" fill="#05304a"/>';
+
+        // затонувший корабль: корпус, сломанные мачты, рваный парус, иллюминаторы
+        s += '<g fill="#04263b">' +
+             '<path d="M700 252 L735 200 L960 212 L995 258 Z"/>' +
+             '<path d="M800 205 L812 95 L822 96 L812 207 Z"/>' +
+             '<path d="M816 110 L870 130 L862 170 L812 160 Z" opacity="0.75"/>' +
+             '<path d="M890 210 L905 150 L913 151 L900 212 Z"/></g>';
+        [760, 800, 840, 880, 920].forEach(function (x, i) {
+            s += `<circle cx="${x}" cy="${222 + i * 1.5}" r="5" fill="#0e5a80"/>`;
+        });
+
+        // сундук с сокровищами (светится)
+        s += '<circle cx="640" cy="250" r="34" fill="#ffe066" opacity="0.2"/>' +
+             '<rect x="622" y="242" width="36" height="20" fill="#8b5a2b" stroke="#c9a227" stroke-width="2"/>' +
+             '<path d="M622 242 q18 -16 36 0 z" fill="#a0522d" stroke="#c9a227" stroke-width="2"/>' +
+             '<rect x="637" y="246" width="6" height="7" fill="#ffe066"/>';
+
+        // песок
+        s += '<path d="M0 300 L0 255 Q200 235 400 252 T800 250 T1200 245 L1200 300 Z" fill="#c2a36b"/>';
+
+        // водоросли (качаются — класс sway)
+        for (let i = 0; i < 16; i++) {
+            const x = Math.round(random() * 1200);
+            const segs = 2 + Math.floor(random() * 3);
+            let d = `M${x} 262 q-12 -15 0 -30`;
+            for (let k = 1; k < segs; k++) {
+                d += " t0 -30";
+            }
+            const color = random() < 0.5 ? "#1f8a5b" : "#2fa36b";
+            s += `<path class="sway" d="${d}" stroke="${color}" stroke-width="6" stroke-linecap="round" fill="none" style="animation-delay:${(-random() * 5).toFixed(2)}s"/>`;
+        }
+
+        // кораллы
+        [[120, "#ff7f8a"], [330, "#ffa94d"], [520, "#c084fc"], [1040, "#ff7f8a"], [1130, "#ffa94d"]].forEach(function (c) {
+            const x = c[0];
+            s += `<path d="M${x} 266 v-34 M${x} 248 l-16 -16 v-10 M${x} 242 l15 -18 v-8 M${x - 16} 236 l-8 -6 M${x + 15} 228 l8 -8" ` +
+                 `stroke="${c[1]}" stroke-width="7" stroke-linecap="round" fill="none"/>`;
+        });
+
+        s += '<path d="M0 300 L0 275 Q300 262 600 276 T1200 270 L1200 300 Z" fill="#a88a55"/>';
+        return s + "</svg>";
+    },
+
+    // Японский сад: гора со снежной шапкой, пагода, пруд с мостиком, ворота, фонари, сакуры
+    sakura: function (random) {
+        let s = SVG_START;
+        s += '<path d="M380 300 L600 80 L820 300 Z" fill="#a98bc9"/>' +
+             '<path d="M600 80 L556 124 L574 120 L588 134 L602 118 L618 132 L644 124 Z" fill="#fff"/>';
+        s += '<path d="M0 300 L0 200 Q200 165 400 205 T800 195 T1200 185 L1200 300 Z" fill="#7d5f9e"/>';
+        s += svgPagoda(200, 232);
+        s += '<path d="M0 300 L0 238 Q300 222 600 236 T1200 230 L1200 300 Z" fill="#5c3d63"/>';
+
+        // пруд и красный мостик
+        s += '<ellipse cx="620" cy="262" rx="190" ry="20" fill="#b9a2ea" opacity="0.7"/>' +
+             '<path d="M520 262 Q620 222 720 262" stroke="#c81d25" stroke-width="7" fill="none"/>' +
+             '<path d="M528 250 Q620 212 712 250" stroke="#c81d25" stroke-width="3" fill="none"/>';
+
+        s += svgTorii(980, 246);
+        s += svgStoneLantern(430, 250) + svgStoneLantern(820, 250);
+        s += svgSakura(90, 262, 1.2, random) + svgSakura(330, 258, 0.9, random) + svgSakura(1120, 262, 1.3, random);
+        return s + "</svg>";
+    },
+
+    // Пустыня: дюны, три пирамиды, оазис с пальмами
+    desert: function () {
+        let s = SVG_START;
+        s += '<path d="M0 300 L0 215 Q200 185 420 210 T850 200 T1200 205 L1200 300 Z" fill="#f2c98a"/>';
+        s += svgPyramid(560, 236, 260, 150) + svgPyramid(780, 236, 180, 100) + svgPyramid(380, 240, 130, 70);
+        s += '<path d="M0 300 L0 240 Q250 215 500 238 T1000 232 T1200 236 L1200 300 Z" fill="#e0a95c"/>';
+        s += '<ellipse cx="170" cy="262" rx="70" ry="9" fill="#4fb3bf" opacity="0.8"/>';
+        s += svgPalm(140, 262, 1.1, -1) + svgPalm(200, 264, 0.85, 1) + svgPalm(1040, 266, 1.2, 1);
+        s += '<path d="M0 300 L0 272 Q300 255 620 270 T1200 266 L1200 300 Z" fill="#d4954a"/>';
+        return s + "</svg>";
+    },
+
+    // Луна: поверхность с кратерами, ракета на стартовой башне, база с куполами
+    space: function (random) {
+        let s = SVG_START;
+        s += '<path d="M0 300 L0 228 Q150 205 300 222 T600 218 T900 226 T1200 212 L1200 300 Z" fill="#6b7287"/>';
+
+        // ракета и стартовая башня
+        s += '<rect x="318" y="150" width="6" height="80" fill="#6b7280"/>' +
+             '<path d="M318 160 h-14 M318 180 h-14 M318 200 h-14" stroke="#6b7280" stroke-width="3"/>' +
+             '<rect x="286" y="168" width="18" height="58" rx="3" fill="#e5e7eb"/>' +
+             '<polygon points="286,168 295,140 304,168" fill="#ef4444"/>' +
+             '<polygon points="286,210 276,228 286,224" fill="#ef4444"/>' +
+             '<polygon points="304,210 314,228 304,224" fill="#ef4444"/>' +
+             '<circle cx="295" cy="185" r="4" fill="#60a5fa"/>';
+
+        // база: два купола с окнами, переход, антенна с мигающим огоньком
+        s += '<rect x="760" y="236" width="90" height="8" fill="#9ca3af"/>' +
+             '<path d="M720 244 a42 42 0 0 1 84 0 z" fill="#d1d5db"/>' +
+             '<path d="M820 244 a28 28 0 0 1 56 0 z" fill="#c7cbd6"/>' +
+             '<rect x="740" y="228" width="8" height="6" fill="#7dd3fc"/><rect x="756" y="222" width="8" height="6" fill="#7dd3fc"/>' +
+             '<rect x="772" y="222" width="8" height="6" fill="#7dd3fc"/><rect x="788" y="228" width="8" height="6" fill="#7dd3fc"/>' +
+             '<rect x="840" y="232" width="7" height="5" fill="#fde68a"/><rect x="852" y="232" width="7" height="5" fill="#fde68a"/>' +
+             '<path d="M762 202 v-30" stroke="#9ca3af" stroke-width="3"/>' +
+             '<path d="M750 176 q12 -14 24 0" stroke="#9ca3af" stroke-width="3" fill="none"/>' +
+             '<circle class="blink" cx="762" cy="168" r="4" fill="#ef4444"/>';
+
+        // ближняя поверхность и кратеры
+        s += '<path d="M0 300 L0 258 Q200 244 450 256 T900 250 T1200 254 L1200 300 Z" fill="#4b5263"/>';
+        for (let i = 0; i < 12; i++) {
+            const cx = Math.round(random() * 1200);
+            const cy = Math.round(266 + random() * 26);
+            const rx = Math.round(14 + random() * 26);
+            const ry = Math.round(rx * 0.3);
+            s += `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#353a48"/>` +
+                 `<ellipse cx="${cx}" cy="${cy - 2}" rx="${rx}" ry="${ry}" fill="none" stroke="#7a8296" stroke-width="1.5" opacity="0.6"/>`;
+        }
+        return s + "</svg>";
+    },
+
+    // 8-бит: ступенчатые холмы, замок, деревья, парящие кирпичи, земля из кирпичей
+    pixel: function () {
+        let s = '<svg class="scenery" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice" shape-rendering="crispEdges">';
+        s += pixelHill(80, 252, 280, 6, "#2e9e44") + pixelHill(700, 252, 220, 4, "#3bb54a") + pixelHill(950, 252, 300, 7, "#2e9e44");
+        s += pixelCastle(470, 252);
+        [380, 640, 900].forEach(function (x) {
+            s += pixelTree(x, 252);
+        });
+        s += pixelBricks(250, 150, 4) + pixelBricks(820, 130, 3);
+
+        // трава
+        s += '<rect x="0" y="240" width="1200" height="14" fill="#3bb54a"/>' +
+             '<rect x="0" y="240" width="1200" height="4" fill="#6fdc6f"/>';
+        // два ряда кирпичей со сдвигом
+        for (let row = 0; row < 2; row++) {
+            const y = 254 + row * 24;
+            for (let x = row % 2 ? -24 : 0; x < 1200; x += 48) {
+                s += `<rect x="${x}" y="${y}" width="48" height="24" fill="#c2662d" stroke="#7a3a12" stroke-width="3"/>`;
+            }
+        }
+        return s + "</svg>";
     }
 };
+
+// Пагода: три яруса с загнутыми крышами и шпиль
+function svgPagoda(cx, base) {
+    const c = "#4a2545";
+    let s = "";
+    for (let k = 0; k < 3; k++) {
+        const w = 70 - k * 16;
+        const y = base - k * 34;
+        s += `<rect x="${cx - w / 2 + 8}" y="${y - 22}" width="${w - 16}" height="22" fill="${c}"/>`;
+        s += `<rect x="${cx - 3}" y="${y - 16}" width="6" height="8" fill="#ffd36b"/>`; // окошко
+        s += `<polygon points="${cx - w / 2 - 14},${y - 18} ${cx - w / 2},${y - 24} ${cx},${y - 34} ${cx + w / 2},${y - 24} ${cx + w / 2 + 14},${y - 18}" fill="${c}"/>`;
+    }
+    s += `<rect x="${cx - 2}" y="${base - 125}" width="4" height="25" fill="${c}"/>`;
+    return s;
+}
+
+// Красные ворота-тории
+function svgTorii(cx, base) {
+    const red = "#c81d25";
+    return `<rect x="${cx - 50}" y="${base - 90}" width="10" height="90" fill="${red}"/>` +
+           `<rect x="${cx + 40}" y="${base - 90}" width="10" height="90" fill="${red}"/>` +
+           `<rect x="${cx - 62}" y="${base - 72}" width="124" height="8" fill="${red}"/>` +
+           `<path d="M${cx - 75} ${base - 92} Q${cx} ${base - 100} ${cx + 75} ${base - 92} L${cx + 70} ${base - 84} Q${cx} ${base - 90} ${cx - 70} ${base - 84} Z" fill="${red}"/>` +
+           `<path d="M${cx - 78} ${base - 94} Q${cx} ${base - 104} ${cx + 78} ${base - 94} L${cx + 76} ${base - 91} Q${cx} ${base - 100} ${cx - 76} ${base - 91} Z" fill="#2b1a10"/>` +
+           `<rect x="${cx - 6}" y="${base - 84}" width="12" height="12" fill="#2b1a10"/>`;
+}
+
+// Каменный фонарь с огоньком
+function svgStoneLantern(cx, base) {
+    return `<rect x="${cx - 10}" y="${base - 6}" width="20" height="6" fill="#8a8494"/>` +
+           `<rect x="${cx - 4}" y="${base - 26}" width="8" height="20" fill="#8a8494"/>` +
+           `<rect x="${cx - 9}" y="${base - 40}" width="18" height="14" fill="#8a8494"/>` +
+           `<rect x="${cx - 4}" y="${base - 36}" width="8" height="6" fill="#ffd36b"/>` +
+           `<polygon points="${cx - 14},${base - 40} ${cx},${base - 50} ${cx + 14},${base - 40}" fill="#6f6a7a"/>`;
+}
+
+// Дерево сакуры: изогнутый ствол и пышная розовая крона из кружков
+function svgSakura(x, base, sc, random) {
+    let s = `<path d="M${x} ${base} Q${x - 6 * sc} ${base - 40 * sc} ${x + 4 * sc} ${base - 70 * sc}" stroke="#3b2430" stroke-width="${8 * sc}" fill="none" stroke-linecap="round"/>` +
+            `<path d="M${x + 1 * sc} ${base - 50 * sc} L${x + 28 * sc} ${base - 72 * sc} M${x - 2 * sc} ${base - 40 * sc} L${x - 26 * sc} ${base - 64 * sc}" stroke="#3b2430" stroke-width="${4 * sc}" stroke-linecap="round"/>`;
+    const pinks = ["#f9a8d4", "#f472b6", "#fbcfe8"];
+    for (let i = 0; i < 10; i++) {
+        const cx = x + (random() * 90 - 45) * sc;
+        const cy = base - (80 + random() * 40 - 20) * sc;
+        const r = (16 + random() * 14) * sc;
+        s += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${pinks[Math.floor(random() * 3)]}" opacity="0.92"/>`;
+    }
+    return s;
+}
+
+// Пирамида: освещённая левая грань и затенённая правая
+function svgPyramid(cx, base, w, h) {
+    return `<polygon points="${cx - w / 2},${base} ${cx},${base - h} ${cx},${base}" fill="#efc075"/>` +
+           `<polygon points="${cx},${base - h} ${cx + w / 2},${base} ${cx},${base}" fill="#c98a45"/>`;
+}
+
+// Пальма: изогнутый ствол, свисающие листья и кокосы. dir = 1 (наклон вправо) или -1 (влево)
+function svgPalm(x, base, sc, dir) {
+    const tx = x + dir * 6 * sc;
+    const ty = base - 95 * sc;
+    let s = `<path d="M${x} ${base} Q${x + dir * 12 * sc} ${base - 50 * sc} ${tx} ${ty}" stroke="#6b4423" stroke-width="${8 * sc}" fill="none" stroke-linecap="round"/>`;
+    [-170, -135, -95, -50, -10].forEach(function (deg) {
+        const a = deg * Math.PI / 180;
+        const mx = tx + Math.cos(a) * 30 * sc;
+        const my = ty + Math.sin(a) * 30 * sc - 15 * sc;
+        const ex = tx + Math.cos(a) * 60 * sc;
+        const ey = ty + Math.sin(a) * 60 * sc + 20 * sc;
+        s += `<path d="M${tx} ${ty} Q${mx} ${my} ${ex} ${ey}" stroke="#2f6b2f" stroke-width="${7 * sc}" fill="none" stroke-linecap="round"/>`;
+    });
+    s += `<circle cx="${tx - 4 * sc}" cy="${ty + 6 * sc}" r="${4 * sc}" fill="#5a3a1a"/>` +
+         `<circle cx="${tx + 5 * sc}" cy="${ty + 7 * sc}" r="${4 * sc}" fill="#5a3a1a"/>`;
+    return s;
+}
+
+// Пиксельный холм-«лесенка»
+function pixelHill(x, base, w, steps, color) {
+    let s = "";
+    for (let k = 0; k < steps; k++) {
+        s += `<rect x="${x + k * 16}" y="${base - (k + 1) * 16}" width="${w - k * 32}" height="16" fill="${color}"/>`;
+    }
+    return s;
+}
+
+// Пиксельный замок: стена с зубцами, башня с флагом, ворота и окна
+function pixelCastle(x, base) {
+    let s = `<rect x="${x}" y="${base - 80}" width="120" height="80" fill="#9ca3af" stroke="#4b5563" stroke-width="3"/>`;
+    for (let i = 0; i < 5; i++) {
+        s += `<rect x="${x + i * 26}" y="${base - 96}" width="16" height="16" fill="#9ca3af" stroke="#4b5563" stroke-width="3"/>`;
+    }
+    s += `<rect x="${x + 40}" y="${base - 140}" width="40" height="44" fill="#9ca3af" stroke="#4b5563" stroke-width="3"/>`;
+    for (let i = 0; i < 3; i++) {
+        s += `<rect x="${x + 40 + i * 14}" y="${base - 152}" width="10" height="12" fill="#9ca3af" stroke="#4b5563" stroke-width="3"/>`;
+    }
+    s += `<rect x="${x + 58}" y="${base - 182}" width="4" height="30" fill="#4b5563"/>` +
+         `<rect x="${x + 62}" y="${base - 182}" width="20" height="12" fill="#e53935"/>` +
+         `<rect x="${x + 48}" y="${base - 36}" width="24" height="36" fill="#1f2937"/>` +
+         `<rect x="${x + 16}" y="${base - 60}" width="12" height="12" fill="#1f2937"/>` +
+         `<rect x="${x + 92}" y="${base - 60}" width="12" height="12" fill="#1f2937"/>` +
+         `<rect x="${x + 54}" y="${base - 126}" width="12" height="12" fill="#1f2937"/>`;
+    return s;
+}
+
+// Пиксельное дерево с квадратной кроной
+function pixelTree(x, base) {
+    return `<rect x="${x - 6}" y="${base - 30}" width="12" height="30" fill="#8b5a2b"/>` +
+           `<rect x="${x - 24}" y="${base - 78}" width="48" height="48" fill="#1f7a33"/>` +
+           `<rect x="${x - 16}" y="${base - 94}" width="32" height="16" fill="#1f7a33"/>` +
+           `<rect x="${x - 16}" y="${base - 70}" width="12" height="12" fill="#2e9e44"/>`;
+}
+
+// Ряд парящих кирпичных блоков
+function pixelBricks(x, y, n) {
+    let s = "";
+    for (let i = 0; i < n; i++) {
+        const bx = x + i * 32;
+        s += `<rect x="${bx}" y="${y}" width="32" height="32" fill="#c2662d" stroke="#7a3a12" stroke-width="3"/>` +
+             `<path d="M${bx} ${y + 16} h32 M${bx + 16} ${y} v16" stroke="#7a3a12" stroke-width="2"/>`;
+    }
+    return s;
+}
 
 // Заполнить слой декораций под нужный дизайн
 function fillDecor(decorEl, themeId) {
@@ -955,7 +1408,7 @@ function fillDecor(decorEl, themeId) {
     (decorConfig[themeId] || []).forEach(function (spec) {
         for (let i = 0; i < spec.count; i++) {
             const span = document.createElement("span");
-            span.className = "decor-item " + spec.anim;
+            span.className = "decor-item " + spec.anim + (spec.className ? " " + spec.className : "");
             span.textContent = spec.symbols[Math.floor(random() * spec.symbols.length)];
 
             const duration = between(random, spec.duration);
@@ -1431,7 +1884,8 @@ function renderThemes() {
             if (!FREE_BUY_RIGHT_CLICK) return;
             e.preventDefault(); // не показываем меню браузера
 
-            if (!ownedThemes.includes(theme.id)) {
+            const wasOwned = ownedThemes.includes(theme.id);
+            if (!wasOwned) {
                 ownedThemes.push(theme.id);
             }
             applyTheme(theme.id);
@@ -1439,6 +1893,11 @@ function renderThemes() {
             updateScreen();
             saveGame();
             closeThemeInfo();
+
+            // как и обычно: сменили — в игру, купили — остаёмся
+            if (wasOwned) {
+                showScreen(gameScreen);
+            }
         });
 
         themeCardsEl.append(card);
@@ -1486,7 +1945,9 @@ themeActionBtn.addEventListener("click", function () {
     const theme = selectedTheme;
     if (!theme) return;
 
-    if (!ownedThemes.includes(theme.id)) {
+    const wasOwned = ownedThemes.includes(theme.id); // уже был куплен — значит, просто меняем дизайн
+
+    if (!wasOwned) {
         if (count < theme.price) {
             themeError.textContent = t("notEnough", theme.price - count);
             playSound("error");
@@ -1503,6 +1964,11 @@ themeActionBtn.addEventListener("click", function () {
     updateScreen();
     saveGame();
     closeThemeInfo();
+
+    // Сменили дизайн — сразу возвращаемся в игру. Купили — остаёмся в магазине.
+    if (wasOwned) {
+        showScreen(gameScreen);
+    }
 });
 
 // ===== Кнопки экрана игры =====
