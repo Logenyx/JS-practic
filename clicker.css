@@ -1,13 +1,26 @@
 body {
     margin: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
     font-family: Arial, sans-serif;
     background: #f0f4f8;
+}
+
+/* ===== Экраны ===== */
+.screen {
+    display: none; /* все экраны спрятаны */
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.screen.active {
+    display: flex; /* показываем только активный */
+}
+
+/* ===== Экран игры ===== */
+#gameScreen {
+    justify-content: center;
+    gap: 20px;
 }
 
 #score {
@@ -51,101 +64,183 @@ button {
     min-height: 45px;
 }
 
-/* ===== Магазин ===== */
-#shop {
+/* Иконка магазина в правом верхнем углу */
+#shopIcon {
     position: fixed;
     top: 20px;
     right: 20px;
-    width: 240px;
-    background: white;
-    border-radius: 12px;
-    padding: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 64px;
+    height: 64px;
+    padding: 0;
+    font-size: 32px;
+    border-radius: 50%;
+    background: #ffb300;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s;
 }
 
-#shop h2 {
-    margin: 0 0 12px;
-    font-size: 22px;
-    text-align: center;
+#shopIcon:hover { transform: scale(1.1); }
+
+/* ===== Экран магазина ===== */
+#shopScreen {
+    padding: 20px;
+    gap: 20px;
 }
 
-.shop-entry + .shop-entry {
-    margin-top: 12px;
-}
-
-.shop-item {
+#shopHeader {
+    width: 100%;
+    max-width: 700px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
-    border: 1px solid #ccc;
+}
+
+#shopHeader h2 {
+    margin: 0;
+    font-size: 32px;
+}
+
+#backBtn {
+    font-size: 18px;
+    padding: 10px 20px;
+    background: #ddd;
+}
+
+#balance {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 8px 16px;
+    background: #222;
+    color: #0f0;
     border-radius: 10px;
-    background: #fafafa;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* Сетка карточек */
+#cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    max-width: 700px;
+}
+
+/* Карточка товара */
+.card {
+    position: relative;
+    width: 160px;
+    padding: 12px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 14px;
+    text-align: center;
     cursor: pointer;
+    box-sizing: border-box;
     transition: background 0.2s, border 0.2s, box-shadow 0.2s;
 }
 
-.shop-item:hover {
-    background: #f0f0f0;
+.card:hover { background: #f7f7f7; }
+
+/* Квадратная иконка */
+.card-icon {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* делает блок квадратным */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    background: #e3f2fd;
+    border-radius: 10px;
 }
 
-/* Выбранный товар: подсветка и толстая обводка */
-.shop-item.selected {
+.card-name {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.card-price {
+    margin-top: 4px;
+    color: #4caf50;
+    font-weight: bold;
+}
+
+/* Выбранная карточка: подсветка и толстая обводка */
+.card.selected {
     background: #fff8d6;
     border: 4px solid #ffb300;
-    padding: 9px; /* компенсируем толстую рамку, чтобы товар не «прыгал» */
+    padding: 9px; /* компенсируем толстую рамку, чтобы карточка не «прыгала» */
     box-shadow: 0 0 12px rgba(255, 179, 0, 0.6);
 }
 
-/* Купленный товар */
-.shop-item.bought {
-    background: #e0e0e0;
-    color: #888;
+/* Купленный товар: светло-серая иконка */
+.card.sold {
     cursor: default;
 }
 
-.item-name { font-weight: bold; font-size: 18px; }
-.item-price { color: #4caf50; font-weight: bold; }
+.card.sold:hover { background: white; }
+
+.card.sold .card-icon {
+    background: #eeeeee;
+    filter: grayscale(1);
+    opacity: 0.4;
+}
+
+/* Надпись «ПРОДАНО» по центру карточки */
+.sold-label {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    font-size: 26px;
+    font-weight: bold;
+    color: black;
+}
+
+.card.sold .sold-label {
+    display: block;
+}
 
 /* Плашка с описанием */
-.item-info {
-    /* пока спрятана — не занимает места */
-    max-height: 0;
-    overflow: hidden;
-    margin-top: 0;
-    padding: 0 12px;
-    padding: 12px;
+#itemInfo {
+    width: 100%;
+    max-width: 400px;
+    padding: 16px;
     background: #333;
     color: white;
-    border-radius: 10px;
-    font-size: 15px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    text-align: center;
 
+    /* спрятана по умолчанию */
     opacity: 0;
-    transform: translateY(-10px);
-    transition: opacity 0.25s, transform 0.25s, max-height 0.25s, margin-top 0.25s, padding 0.25s;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
 }
 
 /* Плашка выплывает */
-.item-info.show {
-    max-height: 200px;
-    margin-top: 10px;
-    padding: 12px;
+#itemInfo.show {
     opacity: 1;
     transform: translateY(0);
+    pointer-events: auto;
 }
 
-.item-info p { margin: 0 0 10px; }
+#itemInfo h3 { margin: 0 0 8px; }
+#itemInfo p { margin: 0 0 12px; }
 
-.confirm-btn {
+#confirmBtn {
     width: 100%;
-    font-size: 16px;
-    padding: 8px;
+    font-size: 18px;
+    padding: 10px;
     background: #ffb300;
     color: #222;
     font-weight: bold;
 }
 
-.shop-error {
+#shopError {
     margin-top: 8px;
     color: #ff8a80;
     font-size: 14px;
