@@ -650,6 +650,193 @@ button {
     .screamer svg { animation: none; }
 }
 
+/* --- Сакура: листопад поверх всего --- */
+.petal {
+    position: absolute;
+    line-height: 1;
+    cursor: pointer;
+    pointer-events: auto; /* лепестки ловятся кликом и закрывают кнопки под собой */
+    user-select: none;
+    animation: petal-fall linear forwards;
+}
+
+.petal.caught {
+    animation-play-state: paused;
+    opacity: 0;
+    transform: scale(1.8);
+    transition: opacity 0.25s, transform 0.25s;
+}
+
+@keyframes petal-fall {
+    0%   { top: -8%;  transform: translateX(0) rotate(0deg); }
+    25%  { transform: translateX(40px) rotate(90deg); }
+    50%  { transform: translateX(-20px) rotate(180deg); }
+    75%  { transform: translateX(30px) rotate(270deg); }
+    100% { top: 105%; transform: translateX(0) rotate(360deg); }
+}
+
+/* --- Пески фараона: песчаная буря --- */
+.sandstorm {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: auto; /* ловит клики: нажимает «снесённый ветром» курсор */
+    cursor: none;         /* настоящий курсор прячем */
+    opacity: 0;
+    background: radial-gradient(ellipse at center, rgba(222, 184, 120, 0.3), rgba(196, 150, 80, 0.65));
+    transition: opacity 1.5s;
+}
+
+/* песчинки, пятна и курсор внутри бури клики не ловят */
+.sandstorm > * {
+    pointer-events: none;
+}
+
+.sandstorm.on { opacity: 1; }
+
+/* буря стихает — курсор снова свой */
+.sandstorm.ending {
+    opacity: 0;
+    pointer-events: none;
+    cursor: auto;
+    transition: opacity 2s;
+}
+
+/* ветер справа налево — песчинки летят в другую сторону */
+.sandstorm.to-left .sand-streak {
+    left: auto;
+    right: -20%;
+    animation-name: sand-streak-left;
+}
+
+@keyframes sand-streak-left {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-140vw); }
+}
+
+/* курсор, который сносит ветром */
+.wind-cursor {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    filter: drop-shadow(0 0 3px #7c2d12) drop-shadow(0 0 10px rgba(255, 200, 120, 0.9));
+}
+
+/* песчинки, проносящиеся по экрану */
+.sand-streak {
+    position: absolute;
+    left: -20%;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(to right, transparent, rgba(255, 235, 190, 0.9), transparent);
+    animation: sand-streak linear infinite;
+}
+
+@keyframes sand-streak {
+    from { transform: translateX(0); }
+    to   { transform: translateX(140vw); }
+}
+
+/* песок, налипший на «стекло» экрана */
+.sand-splat {
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(170, 120, 60, 0.85) 0 35%, rgba(200, 150, 80, 0.5) 60%, transparent 72%);
+    animation: splat-in 0.25s ease-out;
+}
+
+@keyframes splat-in {
+    from { transform: translate(-50%, -50%) scale(0); }
+    to   { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* --- Космос: инверсия управления --- */
+.invert-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: auto; /* перехватывает клики — нажимает только «зеркальный» курсор */
+    cursor: none;
+    background: rgba(96, 165, 250, 0.05);
+    box-shadow: inset 0 0 90px rgba(124, 58, 237, 0.55);
+    animation: frost-in 0.5s ease-out;
+}
+
+/* зеркальный курсор: перевёрнутая светящаяся стрелка */
+.fake-cursor {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    transform: rotate(180deg);
+    transform-origin: 4px 2px; /* поворачиваем вокруг кончика стрелки */
+    filter: drop-shadow(0 0 6px #a78bfa) drop-shadow(0 0 12px #60a5fa);
+    pointer-events: none;
+}
+
+/* --- Пиксели: герой, гриб и бонус ×2 --- */
+.pixel-hero {
+    position: absolute;
+    bottom: 40px;
+    width: 48px;
+    height: 64px;
+    cursor: pointer;
+    pointer-events: auto;
+    transform-origin: bottom center;
+    transition: transform 0.3s, filter 0.3s;
+}
+
+/* съел гриб — подрос и светится */
+.pixel-hero.grown {
+    transform: scale(1.5);
+    filter: drop-shadow(0 0 8px #ffe600);
+}
+
+/* уже дал бонус — свечение пропадает */
+.pixel-hero.used {
+    filter: none;
+    cursor: default;
+}
+
+/* два кадра ходьбы сменяют друг друга */
+.pixel-hero .frame-a { animation: walk-frame 0.3s steps(1) infinite; }
+.pixel-hero .frame-b { animation: walk-frame 0.3s steps(1) infinite reverse; }
+
+@keyframes walk-frame {
+    0%  { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.pixel-mushroom {
+    position: absolute;
+    bottom: 40px;
+    width: 40px;
+    height: 40px;
+    pointer-events: none;
+    filter: drop-shadow(0 0 6px #c084fc);
+    animation: mushroom-bob 1.2s ease-in-out infinite;
+}
+
+/* гриб стоит на траве и чуть подпрыгивает */
+@keyframes mushroom-bob {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(-6px); }
+}
+
+/* табличка «×2: 15 с» сверху по центру */
+.boost-badge {
+    position: absolute;
+    top: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 14px;
+    font: 14px 'Press Start 2P', monospace;
+    color: #fff;
+    background: #e53935;
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 #000;
+    pointer-events: none;
+}
+
 /* =====================================================
    ЭКРАНЫ МЕНЮ (магазины и настройки) — базовый вид = «Классика»
    ===================================================== */

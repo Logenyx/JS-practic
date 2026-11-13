@@ -118,7 +118,16 @@ const texts = {
         shieldOn: "Защита! Кликни по акуле 10 раз за 9 секунд",
         shieldOver: "Не успел — защита кончилась!",
         features: "Особенности дизайнов",
-        featuresHint: "Машина, лёд, акула и скример",
+        featuresHint: "Особые события во всех дизайнах",
+        sakuraStart: "Листопад! Лови лепестки — +5 за каждый",
+        petalCurse: "Проклятый лепесток! −{n}",
+        sandstorm: "Песчаная буря!",
+        invertStart: "Инверсия! Всё наоборот — кликай правой кнопкой",
+        invertEnd: "Управление снова нормальное",
+        rightClickOnly: "Только правая кнопка!",
+        heroAppears: "Пиксельный герой! Когда съест гриб — кликни по нему",
+        heroWait: "Сначала гриб!",
+        heroBoost: "Клики ×{n} на 20 секунд!",
         needShield: "Без защиты не справиться — съешь золотую рыбку",
         sharkGone: "Акула уплыла!",
         neonPhrases: [
@@ -209,7 +218,16 @@ const texts = {
         shieldOn: "Shield! Hit the shark 10 times in 9 seconds",
         shieldOver: "Too slow — the shield ran out!",
         features: "Design features",
-        featuresHint: "Car, ice, shark and screamer",
+        featuresHint: "Special events in every design",
+        sakuraStart: "Petal fall! Catch the petals — +5 each",
+        petalCurse: "Cursed petal! −{n}",
+        sandstorm: "Sandstorm!",
+        invertStart: "Inversion! Everything is reversed — use the right mouse button",
+        invertEnd: "Controls are back to normal",
+        rightClickOnly: "Right button only!",
+        heroAppears: "A pixel hero! Click them once they eat the mushroom",
+        heroWait: "Mushroom first!",
+        heroBoost: "Clicks ×{n} for 20 seconds!",
         needShield: "You can't do it without a shield — eat the golden fish",
         sharkGone: "The shark swam away!",
         neonPhrases: [
@@ -300,7 +318,16 @@ const texts = {
         shieldOn: "Schutz! Triff den Hai 10-mal in 9 Sekunden",
         shieldOver: "Zu langsam — der Schutz ist vorbei!",
         features: "Design-Besonderheiten",
-        featuresHint: "Auto, Eis, Hai und Schreckmoment",
+        featuresHint: "Besondere Ereignisse in jedem Design",
+        sakuraStart: "Blütenregen! Fang die Blütenblätter — +5 pro Stück",
+        petalCurse: "Verfluchtes Blütenblatt! −{n}",
+        sandstorm: "Sandsturm!",
+        invertStart: "Umkehrung! Alles ist verkehrt — klick mit der rechten Maustaste",
+        invertEnd: "Steuerung wieder normal",
+        rightClickOnly: "Nur die rechte Taste!",
+        heroAppears: "Ein Pixelheld! Klick ihn an, sobald er den Pilz gegessen hat",
+        heroWait: "Erst der Pilz!",
+        heroBoost: "Klicks ×{n} für 20 Sekunden!",
         needShield: "Ohne Schutz geht es nicht — friss den goldenen Fisch",
         sharkGone: "Der Hai ist weggeschwommen!",
         neonPhrases: [
@@ -387,7 +414,10 @@ const sounds = {
     hit:   { wave: "square",   notes: [[300, 0, 0.07]] },                                        // удар по акуле
     crack: { wave: "square",   notes: [[1900, 0, 0.03], [900, 0.02, 0.05]] },                    // трещина во льду
     shatter: { wave: "triangle", notes: [[2100, 0, 0.06], [1700, 0.04, 0.06], [1350, 0.08, 0.06], [1000, 0.12, 0.1]] }, // лёд разбился
-    warning: { wave: "sawtooth", notes: [[220, 0, 0.15], [220, 0.25, 0.15]] }                    // тревога
+    warning: { wave: "sawtooth", notes: [[220, 0, 0.15], [220, 0.25, 0.15]] },                   // тревога
+    petal: { wave: "sine",     notes: [[1568, 0, 0.08], [2093, 0.05, 0.12]] },                   // поймал лепесток
+    curse: { wave: "sawtooth", notes: [[400, 0, 0.2], [300, 0.15, 0.2], [200, 0.3, 0.35]] },     // проклятый лепесток
+    powerup: { wave: "square", notes: [[523, 0, 0.07], [659, 0.07, 0.07], [784, 0.14, 0.07], [1047, 0.21, 0.07], [1319, 0.28, 0.15]] } // герой съел гриб
 };
 
 // Включить звуковую систему браузера (можно только после нажатия пользователя)
@@ -1783,7 +1813,7 @@ function updateScreen() {
         el.textContent = count;
     });
 
-    let text = t("perClick", clickPower);
+    let text = t("perClick", clickPower * clickMultiplier());
     if (autoPerSecond > 0) {
         text += ", " + t("perSecond", autoPerSecond);
     }
@@ -2114,7 +2144,7 @@ function handleClick(source) {
     lastClickSource = source;
     playSound("click");
     vibrate(15);
-    addPoints(clickPower);
+    addPoints(clickPower * clickMultiplier()); // ×2, если действует бонус пиксельного героя
 }
 
 let keyClick = false; // true, пока идёт «клик», сделанный кнопкой E
@@ -2125,26 +2155,23 @@ clickBtn.addEventListener("mousedown", function (e) {
     handleClick(keyClick ? "key" : "mouse");
 });
 
-// Кнопка E работает как левая кнопка мыши: «кликает» туда, где сейчас курсор.
-// Так можно кликать по кнопке, акуле, золотой рыбке, машине, льду и меню.
-document.addEventListener("keydown", function (e) {
-    if (e.code !== "KeyE") return; // KeyE — работает и на русской раскладке (буква У)
-    if (e.repeat) return;          // зажатая клавиша не кликает сама
-
-    const target = document.elementFromPoint(mouseX, mouseY); // что сейчас под курсором
+// Сделать «клик левой кнопкой» в точке (x, y) — как будто нажали мышкой.
+// Нужно для кнопки E и для зеркального курсора в «Космосе».
+function simulateClick(x, y, fromKey) {
+    const target = document.elementFromPoint(x, y); // что лежит в этой точке
     if (!target) return;
 
     const opts = {
         bubbles: true,
         cancelable: true,
         view: window,
-        clientX: mouseX,
-        clientY: mouseY,
+        clientX: x,
+        clientY: y,
         button: 0
     };
 
     // изображаем настоящий клик мышкой: нажали → отпустили → клик
-    keyClick = true;
+    keyClick = fromKey;
     target.dispatchEvent(new PointerEvent("pointerdown", Object.assign({ pointerType: "mouse", isPrimary: true, buttons: 1 }, opts)));
     target.dispatchEvent(new MouseEvent("mousedown", Object.assign({ buttons: 1 }, opts)));
     target.dispatchEvent(new MouseEvent("mouseup", opts));
@@ -2158,6 +2185,18 @@ document.addEventListener("keydown", function (e) {
             clickBtn.classList.remove("pressed");
         }, 100);
     }
+}
+
+// Кнопка E работает как левая кнопка мыши: «кликает» туда, где сейчас курсор.
+// Так можно кликать по кнопке, акуле, золотой рыбке, машине, льду и меню.
+document.addEventListener("keydown", function (e) {
+    if (e.code !== "KeyE") return; // KeyE — работает и на русской раскладке (буква У)
+    if (e.repeat) return;          // зажатая клавиша не кликает сама
+    if (inverted) return;          // в «Космосе» при инверсии E не работает — только правая кнопка мыши
+
+    // в песчаную бурю E кликает туда, куда ветер снёс курсор
+    const point = windPoint ? windPoint() : { x: mouseX, y: mouseY };
+    simulateClick(point.x, point.y, true);
 });
 
 // Сброс — всё возвращаем в начальное состояние (язык и настройки остаются)
@@ -2177,6 +2216,8 @@ resetBtn.addEventListener("click", function () {
     shopItems.forEach(function (item) {
         item.bought = false;
     });
+
+    endBoost(); // бонус ×2 от пиксельного героя тоже пропадает
 
     // Дизайны тоже сбрасываются — остаётся только «Классика»
     ownedThemes = ["classic"];
@@ -2203,16 +2244,22 @@ document.body.append(fxLayer);
 let mouseX = window.innerWidth / 2;
 let mouseY = window.innerHeight / 2;
 
+// Запоминаем только настоящие движения и нажатия (не «клики», которые делает сама игра)
 document.addEventListener("pointermove", function (e) {
+    if (!e.isTrusted) return;
     mouseX = e.clientX;
     mouseY = e.clientY;
 });
 document.addEventListener("pointerdown", function (e) {
+    if (!e.isTrusted) return;
     mouseX = e.clientX;
     mouseY = e.clientY;
 }, true);
 
 let frozen = false;        // курсор во льду
+let inverted = false;      // инверсия управления в «Космосе»
+let windPoint = null;      // во время песчаной бури: где на самом деле «снесённый» курсор
+let boostUntil = 0;        // до какого момента действуют клики ×2 (бонус пиксельного героя)
 let eventTimer = null;     // таймер до следующего события
 let eventActive = false;   // событие идёт прямо сейчас
 let eventCleanup = null;   // как убрать текущее событие, если надо прервать
@@ -2221,7 +2268,11 @@ let eventCleanup = null;   // как убрать текущее событие,
 const themeEvents = {
     neon: { delay: [15, 30], start: startNeonCar },
     winter: { delay: [40, 80], start: startFreeze },
-    ocean: { delay: [40, 75], start: startShark }
+    ocean: { delay: [40, 75], start: startShark },
+    sakura: { delay: [30, 60], start: startPetalFall },
+    desert: { delay: [70, 130], start: startSandstorm },  // буря — нечасто
+    space: { delay: [0.3, 0.3], start: startInversion }, // инверсия включена всегда, пока ты на экране игры
+    pixel: { delay: [40, 80], start: startPixelHero }
 };
 
 // ВРЕМЕННО, для тестов: пробел сразу запускает особенность текущего дизайна
@@ -2708,6 +2759,541 @@ function startShark() {
 
     spawnGoldFish();
     raf = requestAnimationFrame(frame);
+    eventCleanup = end;
+}
+
+// ----- САКУРА: листопад поверх кнопок -----
+const PETAL_POINTS = 5;          // сколько даёт лепесток
+const PETAL_CURSE_CHANCE = 0.03; // шанс «проклятого» лепестка (3%)
+const PETAL_FALL_TIME = 12000;   // сколько секунд сыплются лепестки, мс
+
+function startPetalFall() {
+    const petals = [];
+    showFloat(t("sakuraStart"), window.innerWidth / 2, window.innerHeight * 0.2, "#f472b6", true);
+
+    function spawnPetal() {
+        const petal = document.createElement("div");
+        petal.className = "petal";
+        petal.textContent = "🌸";
+        petal.style.left = (Math.random() * 95) + "%";
+        petal.style.fontSize = (26 + Math.random() * 16) + "px";
+        petal.style.animationDuration = (4 + Math.random() * 3) + "s";
+
+        petal.addEventListener("pointerdown", function (e) {
+            e.stopPropagation();
+            if (petal.classList.contains("caught")) return;
+            petal.classList.add("caught");
+
+            if (Math.random() < PETAL_CURSE_CHANCE) {
+                // проклятый: отнимает столько, сколько дали бы 100 кликов. Баланс может уйти в минус!
+                const penalty = 100 * clickPower;
+                count -= penalty;
+                updateScreen();
+                saveGame();
+                showFloat(t("petalCurse", penalty), e.clientX, e.clientY, "#ff4d4d", true);
+                playSound("curse");
+                vibrate([100, 50, 200]);
+            } else {
+                addPoints(PETAL_POINTS);
+                showFloat("+" + PETAL_POINTS, e.clientX, e.clientY, "#f9a8d4");
+                playSound("petal");
+            }
+
+            setTimeout(function () {
+                petal.remove();
+            }, 250);
+        });
+
+        // долетел до низа — убираем
+        petal.addEventListener("animationend", function () {
+            petal.remove();
+        });
+
+        fxLayer.append(petal);
+        petals.push(petal);
+    }
+
+    const spawner = setInterval(spawnPetal, 220);
+
+    // через 12 секунд новые лепестки перестают падать, ещё через 7 — последние долетают
+    const stopTimer = setTimeout(function () {
+        clearInterval(spawner);
+    }, PETAL_FALL_TIME);
+
+    const endTimer = setTimeout(function () {
+        end();
+        finishThemeEvent();
+    }, PETAL_FALL_TIME + 7000);
+
+    function end() {
+        clearInterval(spawner);
+        clearTimeout(stopTimer);
+        clearTimeout(endTimer);
+        petals.forEach(function (p) {
+            p.remove();
+        });
+    }
+
+    eventCleanup = end;
+}
+
+// ----- ПЕСКИ ФАРАОНА: песчаная буря -----
+const SANDSTORM_TIME = 11000; // сколько длится буря, мс
+
+const WIND_PUSH = 260;   // насколько сильно ветер сносит курсор (в среднем), пикселей
+const WIND_GUST = 170;   // насколько сильнее/слабее бывают порывы, пикселей
+const WIND_SHAKE = 16;   // насколько курсор трясёт, пикселей
+const WIND_LAG = 3;      // инерция: чем меньше число, тем сильнее курсор отстаёт от мышки
+
+function startSandstorm() {
+    const dir = Math.random() < 0.5 ? 1 : -1; // 1 — ветер слева направо, -1 — справа налево
+    const storm = document.createElement("div");
+    storm.className = "sandstorm" + (dir < 0 ? " to-left" : "");
+
+    // песчинки, проносящиеся по экрану
+    for (let i = 0; i < 70; i++) {
+        const streak = document.createElement("span");
+        const duration = 0.4 + Math.random() * 0.8;
+        streak.className = "sand-streak";
+        streak.style.top = (Math.random() * 100) + "%";
+        streak.style.width = (40 + Math.random() * 100) + "px";
+        streak.style.opacity = 0.4 + Math.random() * 0.6;
+        streak.style.animationDuration = duration + "s";
+        streak.style.animationDelay = -(Math.random() * duration) + "s";
+        storm.append(streak);
+    }
+
+    // курсор, который сносит ветром
+    const windCursor = document.createElement("div");
+    windCursor.className = "wind-cursor";
+    windCursor.innerHTML = '<svg viewBox="0 0 24 24" width="30" height="30"><path d="M4 2 L4 20 L9 15 L12 22 L15 21 L12 14 L19 14 Z" fill="#fff" stroke="#7c2d12" stroke-width="1.5"/></svg>';
+    storm.append(windCursor);
+
+    fxLayer.append(storm);
+    void storm.offsetWidth; // чтобы плавное появление сработало
+    storm.classList.add("on");
+
+    showFloat(t("sandstorm"), window.innerWidth / 2, window.innerHeight * 0.2, "#7c2d12", true);
+    const wind = playWind(SANDSTORM_TIME);
+
+    // --- ветер сносит курсор ---
+    const startTime = performance.now();
+    let calming = false; // буря стихает — снос плавно уходит
+    let calmStart = 0;   // когда начала стихать
+    let raf = null;
+    let pointX = mouseX;
+    let pointY = mouseY;
+
+    let lastFrame = startTime;
+
+    function frame(now) {
+        const time = (now - startTime) / 1000;
+        const dt = Math.min(0.05, (now - lastFrame) / 1000);
+        lastFrame = now;
+
+        // снос плавно нарастает в начале и плавно уходит в конце
+        let strength = Math.min(1, time / 1.5);
+        if (calming) {
+            strength = Math.max(0, 1 - (now - calmStart) / 1000);
+        }
+
+        // порывы: снос то сильнее, то слабее (два разных ритма — порывы непредсказуемые),
+        // курсор подбрасывает вверх-вниз и трясёт
+        const push = (WIND_PUSH + WIND_GUST * Math.sin(time * 1.3) + 60 * Math.sin(time * 3.7)) * strength;
+        const bounce = (Math.sin(time * 4.1) * 40 + Math.sin(time * 9.7) * 14) * strength;
+        const shakeX = (Math.random() - 0.5) * 2 * WIND_SHAKE * strength;
+        const shakeY = (Math.random() - 0.5) * 2 * WIND_SHAKE * strength;
+
+        // куда ветер тянет курсор
+        const targetX = mouseX + dir * push + shakeX;
+        const targetY = mouseY + bounce + shakeY;
+
+        // инерция: курсор не прыгает сразу, а с опозданием догоняет — им тяжело точно управлять
+        const follow = calming ? 1 : 1 - Math.exp(-WIND_LAG * dt);
+        pointX += (targetX - pointX) * follow;
+        pointY += (targetY - pointY) * follow;
+
+        pointX = Math.min(Math.max(pointX, 2), window.innerWidth - 2);
+        pointY = Math.min(Math.max(pointY, 2), window.innerHeight - 2);
+        windCursor.style.left = pointX + "px";
+        windCursor.style.top = pointY + "px";
+
+        raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+
+    // клик левой кнопкой срабатывает там, куда курсор снесло
+    storm.addEventListener("pointerdown", function (e) {
+        if (!e.isTrusted || e.button !== 0) return;
+        e.preventDefault();
+        storm.style.pointerEvents = "none"; // чтобы найти, что лежит ПОД бурей
+        simulateClick(pointX, pointY, false);
+        storm.style.pointerEvents = "";
+    });
+
+    // кнопка E тоже кликает «снесённым» курсором
+    windPoint = function () {
+        return { x: pointX, y: pointY };
+    };
+
+    // песок налипает на «стекло» экрана
+    let splats = 0;
+    const splatTimer = setInterval(function () {
+        if (splats >= 60) return;
+        const splat = document.createElement("span");
+        const size = 6 + Math.random() * 26;
+        splat.className = "sand-splat";
+        splat.style.left = (Math.random() * 100) + "%";
+        splat.style.top = (Math.random() * 100) + "%";
+        splat.style.width = size + "px";
+        splat.style.height = size + "px";
+        storm.append(splat);
+        splats++;
+    }, 150);
+
+    // под конец буря стихает: курсор возвращается, потом всё исчезает
+    const fadeTimer = setTimeout(function () {
+        clearInterval(splatTimer);
+        calming = true;
+        calmStart = performance.now();
+        storm.classList.add("ending");
+        windCursor.style.display = "none"; // снова видно настоящий курсор
+        windPoint = null;
+    }, SANDSTORM_TIME - 2000);
+
+    const endTimer = setTimeout(function () {
+        end();
+        finishThemeEvent();
+    }, SANDSTORM_TIME);
+
+    function end() {
+        clearInterval(splatTimer);
+        clearTimeout(fadeTimer);
+        clearTimeout(endTimer);
+        cancelAnimationFrame(raf);
+        windPoint = null;
+        if (wind) wind.stop();
+        storm.remove();
+    }
+
+    eventCleanup = end;
+}
+
+// Вой ветра: шум, у которого «гуляет» высота
+function playWind(duration) {
+    if (!settings.sound || settings.volume === 0) return null;
+    if (!ensureAudio()) return null;
+
+    const now = audioCtx.currentTime;
+    const end = now + duration / 1000;
+
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = getNoiseBuffer();
+    noise.loop = true;
+
+    const band = audioCtx.createBiquadFilter();
+    band.type = "bandpass";
+    band.frequency.value = 500;
+    band.Q.value = 0.8;
+
+    // медленно качаем частоту фильтра — получается завывание
+    const lfo = audioCtx.createOscillator();
+    const lfoGain = audioCtx.createGain();
+    lfo.frequency.value = 0.4;
+    lfoGain.gain.value = 300;
+    lfo.connect(lfoGain);
+    lfoGain.connect(band.frequency);
+
+    const g = audioCtx.createGain();
+    const volume = (settings.volume / 100) * 0.35;
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(volume, now + 1.5);
+    g.gain.setValueAtTime(volume, end - 2);
+    g.gain.exponentialRampToValueAtTime(0.0001, end);
+
+    noise.connect(band);
+    band.connect(g);
+    g.connect(audioCtx.destination);
+    noise.start(now);
+    lfo.start(now);
+    noise.stop(end + 0.1);
+    lfo.stop(end + 0.1);
+
+    return {
+        // остановить раньше времени (ушли в меню)
+        stop: function () {
+            const t0 = audioCtx.currentTime;
+            g.gain.cancelScheduledValues(t0);
+            g.gain.setValueAtTime(Math.max(g.gain.value, 0.0001), t0);
+            g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.3);
+            try {
+                noise.stop(t0 + 0.35);
+                lfo.stop(t0 + 0.35);
+            } catch (e) {
+                // звук уже закончился сам — ничего страшного
+            }
+        }
+    };
+}
+
+// ----- КОСМОС: инверсия управления -----
+// Работает всё время, пока ты на экране игры. В меню и магазинах управление обычное.
+
+function startInversion() {
+    inverted = true;
+
+    // слой поверх экрана ловит клики; настоящий курсор прячем
+    const overlay = document.createElement("div");
+    overlay.className = "invert-overlay";
+
+    // зеркальный курсор: мышь вверх — он вниз, мышь влево — он вправо
+    const fake = document.createElement("div");
+    fake.className = "fake-cursor";
+    fake.innerHTML = '<svg viewBox="0 0 24 24" width="30" height="30"><path d="M4 2 L4 20 L9 15 L12 22 L15 21 L12 14 L19 14 Z" fill="#fff" stroke="#7c3aed" stroke-width="1.5"/></svg>';
+    overlay.append(fake);
+    fxLayer.append(overlay);
+
+    function mirrorX() { return window.innerWidth - mouseX; }
+    function mirrorY() { return window.innerHeight - mouseY; }
+
+    function place() {
+        fake.style.left = mirrorX() + "px";
+        fake.style.top = mirrorY() + "px";
+    }
+    place();
+    document.addEventListener("pointermove", place);
+
+    // меню браузера по правой кнопке не показываем
+    overlay.addEventListener("contextmenu", function (e) {
+        e.preventDefault();
+    });
+
+    overlay.addEventListener("pointerdown", function (e) {
+        if (!e.isTrusted) return;
+        e.preventDefault();
+
+        if (e.button === 2) {
+            // правая кнопка «кликает» туда, где зеркальный курсор
+            overlay.style.pointerEvents = "none"; // чтобы найти, что лежит ПОД слоем
+            simulateClick(mirrorX(), mirrorY(), false);
+            overlay.style.pointerEvents = "";
+        } else if (e.button === 0) {
+            showFloat(t("rightClickOnly"), mirrorX(), mirrorY() - 40, "#a78bfa");
+        }
+    });
+
+    showFloat(t("invertStart"), window.innerWidth / 2, window.innerHeight * 0.2, "#a5f3fc", true);
+
+    function end() {
+        inverted = false;
+        document.removeEventListener("pointermove", place);
+        overlay.remove();
+    }
+
+    // ушли в магазин или меню — инверсия выключается; вернулись на экран игры — включается снова
+    eventCleanup = end;
+}
+
+// ----- ПИКСЕЛИ: пиксельный герой и гриб -----
+const HERO_SPEED = 110;    // скорость героя, пикселей в секунду
+const BOOST_TIME = 20000;  // сколько действуют клики ×2, мс
+
+// Во сколько раз сейчас умножаются клики (2 — пока действует бонус героя)
+function clickMultiplier() {
+    return performance.now() < boostUntil ? 2 : 1;
+}
+
+let boostBadge = null;
+let boostTicker = null;
+
+// Включить клики ×2 на 20 секунд и показать табличку с обратным отсчётом
+function startBoost() {
+    boostUntil = performance.now() + BOOST_TIME;
+    if (!boostBadge) {
+        boostBadge = document.createElement("div");
+        boostBadge.className = "boost-badge";
+        fxLayer.append(boostBadge);
+    }
+
+    function tick() {
+        const left = Math.ceil((boostUntil - performance.now()) / 1000);
+        if (left <= 0) {
+            endBoost();
+            return;
+        }
+        // показываем ИТОГОВЫЙ множитель: купленный ×2 и бонус героя ×2 вместе дают ×4
+        boostBadge.textContent = "×" + (clickPower * 2) + " · " + left;
+    }
+
+    clearInterval(boostTicker);
+    tick();
+    boostTicker = setInterval(tick, 250);
+    updateScreen();
+}
+
+function endBoost() {
+    boostUntil = 0;
+    clearInterval(boostTicker);
+    boostTicker = null;
+    if (boostBadge) {
+        boostBadge.remove();
+        boostBadge = null;
+    }
+    updateScreen();
+}
+
+// Нарисовать пиксельную картинку из строк: каждая буква — цвет, точка — пусто
+function pixelArt(rows, palette, size) {
+    let s = "";
+    rows.forEach(function (row, y) {
+        for (let x = 0; x < row.length; x++) {
+            const color = palette[row[x]];
+            if (color) {
+                s += `<rect x="${x * size}" y="${y * size}" width="${size}" height="${size}" fill="${color}"/>`;
+            }
+        }
+    });
+    return s;
+}
+
+// Свой пиксельный герой в красно-синем: тёмно-синяя шапка-бини, красная толстовка, синие штаны, белые кеды
+const HERO_PALETTE = {
+    H: "#1e3a8a", h: "#3b82f6",   // шапка и её отворот
+    S: "#ffcc99", E: "#222222",   // лицо и глаза
+    T: "#e53935", t: "#b71c1c",   // толстовка и её низ
+    P: "#1d4ed8",                 // штаны
+    W: "#f8fafc"                  // кеды
+};
+
+const HERO_BODY = [
+    "...HHHHHH...",
+    "..HHHHHHHH..",
+    "..hhhhhhhh..",
+    "..SSSSSSSS..",
+    "..SSESSESS..",
+    "..SSSSSSSS..",
+    "...SSSSSS...",
+    "..TTTTTTTT..",
+    ".TTTTTTTTTT.",
+    ".STTTTTTTTS.",
+    "..TTTTTTTT..",
+    "..tttttttt.."
+];
+
+// ноги: два кадра ходьбы
+const HERO_LEGS_A = [
+    "..PPP..PPP..",
+    "..PPP..PPP..",
+    ".WWW....WWW.",
+    ".WWW....WWW."
+];
+
+const HERO_LEGS_B = [
+    "...PPPPPP...",
+    "....PPPP....",
+    "...WWWWWW...",
+    "...WWWWWW..."
+];
+
+// Волшебный гриб: фиолетовая шляпка в жёлтую крапинку
+const MUSHROOM_PALETTE = { C: "#a855f7", D: "#fde047", s: "#f5f5dc" };
+const MUSHROOM = [
+    "..CCCC..",
+    ".CDCCDC.",
+    "CCCCCCCC",
+    "CDCCCCDC",
+    "..ssss..",
+    "..ssss..",
+    "..ssss..",
+    ".ssssss."
+];
+
+// Где проходит трава в пиксельном пейзаже (в пикселях от низа экрана).
+// Пейзаж растягивается под ширину экрана, поэтому высота травы на разных экранах разная.
+function pixelGroundHeight() {
+    const scale = Math.max(window.innerWidth / 1200, (window.innerHeight * 0.38) / 300);
+    return 60 * scale; // трава в рисунке — на 60 единиц выше его низа
+}
+
+function startPixelHero() {
+    const W = window.innerWidth;
+    const ground = pixelGroundHeight();
+
+    // гриб ждёт где-то посередине, на траве
+    const mushroomX = W * (0.3 + Math.random() * 0.4);
+    const mushroom = document.createElement("div");
+    mushroom.className = "pixel-mushroom";
+    mushroom.style.left = mushroomX + "px";
+    mushroom.style.bottom = ground + "px";
+    mushroom.innerHTML = '<svg viewBox="0 0 40 40" width="40" height="40" shape-rendering="crispEdges">' +
+        pixelArt(MUSHROOM, MUSHROOM_PALETTE, 5) + "</svg>";
+
+    // герой выходит из-за левого края
+    const hero = document.createElement("div");
+    hero.className = "pixel-hero";
+    hero.style.bottom = ground + "px"; // идёт по траве, а не под землёй
+    hero.innerHTML = '<svg viewBox="0 0 48 64" width="48" height="64" shape-rendering="crispEdges">' +
+        pixelArt(HERO_BODY, HERO_PALETTE, 4) +
+        '<g class="frame-a" transform="translate(0 48)">' + pixelArt(HERO_LEGS_A, HERO_PALETTE, 4) + "</g>" +
+        '<g class="frame-b" transform="translate(0 48)">' + pixelArt(HERO_LEGS_B, HERO_PALETTE, 4) + "</g>" +
+        "</svg>";
+
+    fxLayer.append(mushroom, hero);
+
+    let x = -60;
+    let grown = false;
+    let used = false;
+    let last = performance.now();
+    let raf = null;
+
+    showFloat(t("heroAppears"), W / 2, window.innerHeight * 0.2, "#ffe600", true);
+
+    hero.addEventListener("pointerdown", function (e) {
+        e.stopPropagation();
+        if (used) return;
+        if (!grown) {
+            showFloat(t("heroWait"), e.clientX, e.clientY - 40, "#ffe600");
+            return;
+        }
+        used = true;
+        hero.classList.add("used");
+        startBoost();
+        showFloat(t("heroBoost", clickPower * 2), e.clientX, e.clientY - 50, "#ffe600", true);
+        playSound("bonus");
+        vibrate([30, 30, 30]);
+    });
+
+    function frame(now) {
+        const dt = Math.min(0.05, (now - last) / 1000);
+        last = now;
+        x += HERO_SPEED * dt;
+        hero.style.left = x + "px";
+
+        // дошёл до гриба — съел и подрос
+        if (!grown && x + 24 >= mushroomX) {
+            grown = true;
+            mushroom.remove();
+            hero.classList.add("grown");
+            playSound("powerup");
+        }
+
+        // ушёл за правый край
+        if (x > W + 80) {
+            end();
+            finishThemeEvent();
+            return;
+        }
+        raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+
+    function end() {
+        cancelAnimationFrame(raf);
+        hero.remove();
+        mushroom.remove();
+        // бонус ×2, если уже включён, продолжает действовать до конца своих 20 секунд
+    }
+
     eventCleanup = end;
 }
 
