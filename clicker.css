@@ -192,6 +192,9 @@ button {
     bottom: 0;
     width: 100%;
     height: 38%;
+    /* На широком экране пейзаж растягивается и становится выше своей рамки.
+       Без этого всё, что выше рамки (верхушки домов, гор, пирамид, замка), обрезалось бы ровной линией */
+    overflow: visible;
 }
 
 /* Летающие / мерцающие значки */
@@ -1280,10 +1283,7 @@ button {
    светящиеся рамки, острые углы, табло и кнопка рядом
    ===================================================== */
 .theme-neon {
-    background:
-        linear-gradient(rgba(255, 0, 200, 0.1) 1px, transparent 1px) 0 0 / 40px 40px,
-        linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px) 0 0 / 40px 40px,
-        #05010d;
+    background: #05010d; /* тёмное ночное небо, без клеток */
     color: #e0e0ff;
     font-family: 'Russo One', sans-serif;
     --accent: #ff00c8;
@@ -1388,11 +1388,12 @@ button {
     font-family: monospace;
 }
 
+/* Ретро-солнце: поднято так, чтобы верхняя половина выглядывала из-за домов */
 .theme-neon > .decor::before {
     content: "";
     position: absolute;
     left: 50%;
-    bottom: 22%;
+    bottom: 40%;
     width: 340px;
     height: 340px;
     transform: translateX(-50%);
